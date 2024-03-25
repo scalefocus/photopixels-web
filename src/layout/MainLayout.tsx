@@ -1,5 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
-import { Box, Button, Drawer, IconButton, Typography } from '@mui/material';
+import { Box, Drawer, IconButton, Typography } from '@mui/material';
 import { PropsWithChildren, useState } from 'react';
 
 import Nav from './Nav';
