@@ -21,15 +21,12 @@ export const ImageGallery: React.FC = () => {
 		getNextPageParam: (lastPage) => lastPage.lastId || null,
 	});
 
-	const lastId = data?.pages.slice(-1)[0].lastId;
 	const imageIds = data?.pages.map((page) => page.properties).flat();
-	const lastImage = data?.pages.slice(-1)[0].properties?.slice(-1)[0].id;
 	const numberOfImages = imageIds?.length || 0;
-	const hasNewPage = hasNextPage && lastImage !== lastId;
 	const hasImages = data?.pages && data?.pages[0].properties?.length > 0;
 
 	useEffect(() => {
-		if (inView && hasNewPage) {
+		if (inView && hasNextPage) {
 			fetchNextPage();
 		}
 	}, [inView]);
@@ -44,15 +41,12 @@ export const ImageGallery: React.FC = () => {
 		setPreviewOpen(false);
 	};
 
-	// if there is no previous image
 	const disablePrevButton = currentImage === 0;
-
-	// if there is no next image
-	const disableNextButton = currentImage === numberOfImages - 1 && !hasNewPage;
+	const disableNextButton = currentImage === numberOfImages - 1 && !hasNextPage;
 
 	const handleNext = () => {
 		if (disableNextButton) return;
-		if (currentImage && currentImage >= numberOfImages - 2 && hasNewPage) {
+		if (currentImage && currentImage >= numberOfImages - 2 && hasNextPage) {
 			fetchNextPage();
 		}
 		setCurrentImage((prev) => (prev ? prev + 1 : 1));
