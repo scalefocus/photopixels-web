@@ -1,0 +1,20 @@
+on:
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
