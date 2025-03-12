@@ -83,8 +83,8 @@ export const ImageGallery: React.FC = () => {
 						.flat()
 						.map((thumbnail: IThumbnail, index) => (
 							<Grid item xs={1} key={thumbnail.id}>
-								<Paper elevation={0} onClick={() => openPreview(index)}>
-									<ImageThumbnail id={thumbnail.id} />
+								<Paper elevation={0} onClick={() => openPreview(index)}>									
+								<ImageThumbnail id={thumbnail.id} mediaType={thumbnail.mediaType} />
 								</Paper>
 							</Grid>
 						))}
@@ -102,7 +102,7 @@ export const ImageGallery: React.FC = () => {
 					onClose={closePreview}
 					handleNext={handleNext}
 					handlePrev={handlePrev}
-					image={imageIds[currentImage]}
+					media={imageIds[currentImage]}
 					disablePrevButton={disablePrevButton}
 					disableNextButton={disableNextButton}
 				/>
