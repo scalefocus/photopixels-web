@@ -1,5 +1,5 @@
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { Box, IconButton, Skeleton, Typography } from '@mui/material';
+import { Box, IconButton, Skeleton } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getThumbnail } from 'api/api';
 
