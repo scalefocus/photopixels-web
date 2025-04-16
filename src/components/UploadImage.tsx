@@ -113,7 +113,7 @@ const Upload: React.FC = () => {
 					{isPending ? 'Uploading' : 'Browse Files'}
 					<input
 						type="file"
-						accept="image/*"
+						accept="image/*, video/*"
 						onChange={(event) => {
 							const files = event.target.files;
 

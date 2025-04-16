@@ -53,11 +53,12 @@ export enum UserRoles {
 	USER,
 }
 
-
 export interface IThumbnail {
 	id: string;
 	dateCreated: string;
+	mediaType?: string;
 }
+
 export interface IGetObjects {
 	lastId: string;
 	properties: IThumbnail[];

@@ -12,15 +12,17 @@ import {
 	DialogContent,
 	Typography,
 } from '@mui/material';
+import CardMedia from '@mui/material/CardMedia';
 import { useQuery } from '@tanstack/react-query';
 import { getPhoto } from 'api/api';
 import { useEffect, useState } from 'react';
 
 interface PreviewProps {
 	isOpen: boolean;
-	image: {
+	media: {
 		id: string;
 		dateCreated: string;
+		mediaType?: string;
 	};
 	handlePrev: () => void;
 	handleNext: () => void;
@@ -31,7 +33,7 @@ interface PreviewProps {
 
 const Preview = ({
 	isOpen,
-	image,
+	media,
 	onClose,
 	handlePrev,
 	handleNext,
@@ -39,11 +41,11 @@ const Preview = ({
 	disableNextButton,
 }: PreviewProps) => {
 	const { data: url, isLoading } = useQuery({
-		queryKey: ['getPhoto', image.id],
-		queryFn: () => getPhoto(image.id),
+		queryKey: ['getPhoto', media.id],
+		queryFn: () => getPhoto(media.id),
 	});
 
-	const date = new Date(image.dateCreated).toDateString();
+	const date = new Date(media.dateCreated).toDateString();
 
 	const [zoom, setZoom] = useState(false);
 
@@ -75,7 +77,7 @@ const Preview = ({
 			document.removeEventListener('keydown', handleKeyLeft);
 			document.removeEventListener('keydown', handleKeyRight);
 		};
-	}, [image]);
+	}, [media]);
 
 	return (
 		<>
@@ -102,7 +104,7 @@ const Preview = ({
 							backgroundColor: 'rgba(0, 0, 0)',
 						}}
 					>
-						<img src={url} alt="image" />
+						{ media.mediaType !== "video" && (<img src={url} alt="image" />)}
 					</Box>
 				</Container>
 			)}
@@ -199,7 +201,7 @@ const Preview = ({
 										position: 'relative',
 									}}
 								>
-									<img
+									{ media.mediaType !== "video" && (<img
 										src={url}
 										alt="image"
 										style={{
@@ -208,7 +210,18 @@ const Preview = ({
 											maxHeight: '100%',
 											cursor: 'zoom-in',
 										}}
-									/>
+									/>)}
+									{ media.mediaType === "video" && (<CardMedia
+										component='video'
+										src={url}
+										sx={{ 
+											display: 'flex', 
+											objectFit: 'contain',
+											maxWidth: '100%',
+											maxHeight: '100%'
+										}}
+										controls
+									/>)}
 								</Box>
 							)}
 						</Box>
