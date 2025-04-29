@@ -62,6 +62,7 @@ export const DeleteUser = ({ id }: { id: IGetUser['id'] }) => {
 
 					<Stack spacing={2} direction="row">
 						<Button
+							data-testid="button-delete-user-cancel"
 							disabled={deleteUserMutation.isPending}
 							type="submit"
 							variant="outlined"
@@ -71,7 +72,7 @@ export const DeleteUser = ({ id }: { id: IGetUser['id'] }) => {
 							Cancel
 						</Button>
 						<Button
-							disabled={deleteUserMutation.isPending}
+							data-testid="button-delete-user"							disabled={deleteUserMutation.isPending}
 							type="submit"
 							variant="contained"
 							color="error"

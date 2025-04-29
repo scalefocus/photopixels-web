@@ -74,6 +74,7 @@ export const ChangeRole = ({ id, role }: ChangeRoleProps) => {
 					<SelectRole role={newRole} setRole={setNewRole} />
 					<Stack spacing={2} direction="row" sx={{ mt: 2 }}>
 						<Button
+							data-testid="button-user-role-cancel"
 							disabled={changeRoleMutation.isPending}
 							variant="outlined"
 							sx={{ mt: 2 }}
@@ -82,6 +83,7 @@ export const ChangeRole = ({ id, role }: ChangeRoleProps) => {
 							Cancel
 						</Button>
 						<Button
+							data-testid="button-change-user-role"
 							disabled={changeRoleMutation.isPending}
 							variant="contained"
 							sx={{ mt: 2 }}

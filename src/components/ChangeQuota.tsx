@@ -79,6 +79,7 @@ export const ChangeQuota = ({ id, quota }: ChangeQuotaProps) => {
 
 					<form onSubmit={handleSubmit}>
 						<TextField
+							data-testid="textField-new-quota"
 							required
 							fullWidth
 							label="New Quota (GB)"
@@ -94,6 +95,7 @@ export const ChangeQuota = ({ id, quota }: ChangeQuotaProps) => {
 						/>
 						<Stack spacing={2} direction="row" sx={{ mt: 2 }}>
 							<Button
+								data-testid="button-new-quota-cancel"
 								disabled={changeQuotaMutation.isPending}
 								variant="outlined"
 								onClick={handleCancel}
@@ -101,6 +103,7 @@ export const ChangeQuota = ({ id, quota }: ChangeQuotaProps) => {
 								Cancel
 							</Button>
 							<Button
+								data-testid="button-change-new-quota"
 								disabled={changeQuotaMutation.isPending}
 								type="submit"
 								variant="contained"
