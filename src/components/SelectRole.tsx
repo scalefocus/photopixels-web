@@ -21,6 +21,7 @@ export const SelectRole = ({ role, setRole }: SelectRoleProps) => {
 					value={value}
 					control={<Radio />}
 					label={label}
+					data-testid= {"radio-change-role-" + label}
 				/>
 			))}
 		</RadioGroup>

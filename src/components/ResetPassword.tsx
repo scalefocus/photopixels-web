@@ -92,6 +92,7 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 					</Typography>
 					<form onSubmit={handleSubmit}>
 						<TextField
+							data-testid="textField-new-password"
 							name="password"
 							margin="normal"
 							fullWidth
@@ -114,6 +115,7 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 							}}
 						/>
 						<TextField
+							data-testid="textField-confirm-new-password"
 							name="confirmPassword"
 							margin="normal"
 							fullWidth
@@ -137,6 +139,7 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 						/>
 						<Stack spacing={2} direction="row" sx={{ mt: 2 }}>
 							<Button
+								data-testid="button-reset-password-cancel"
 								disabled={resetPasswordMutation.isPending}
 								type="submit"
 								variant="outlined"
@@ -150,6 +153,7 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 								Cancel
 							</Button>
 							<Button
+								data-testid="button-reset-password"
 								disabled={resetPasswordMutation.isPending}
 								type="submit"
 								variant="contained"

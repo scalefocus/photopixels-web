@@ -126,6 +126,7 @@ export default function Users() {
 											</TableCell>
 											<TableCell align="center">
 												<Button
+													data-testid="button-edit-user"
 													onClick={() => handleClick(user.id)}
 													startIcon={<EditIcon />}
 													variant="outlined"
