@@ -11,7 +11,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import AuthContext from 'context/authContext';
+import React, { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { changeQuota } from '../api/api';
@@ -27,6 +28,7 @@ export const ChangeQuota = ({ id, quota }: ChangeQuotaProps) => {
 	const currentQuota = +formatBytes(quota, 2);
 	const [newQuota, setNewQuota] = useState(currentQuota);
 	const [expanded, setExpanded] = useState(false);
+    const { user, setUser } = useContext(AuthContext);
 
 	const queryClient = useQueryClient();
 
@@ -44,10 +46,17 @@ export const ChangeQuota = ({ id, quota }: ChangeQuotaProps) => {
 		},
 	});
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		changeQuotaMutation.mutate({ id, quota: convertToBytes(newQuota) });
-	};
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const updatedQuota = convertToBytes(newQuota);
+        changeQuotaMutation.mutate({ id, quota: updatedQuota }, {
+            onSuccess: () => {
+                if (user) {
+                    setUser({ ...user, quota: updatedQuota });
+                }
+            },
+        });
+    };
 	const handleCancel = () => {
 		setNewQuota(currentQuota);
 		setExpanded(false);
