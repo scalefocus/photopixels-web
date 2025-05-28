@@ -297,3 +297,16 @@ export async function adminResetPassword({
 
 	return response.data;
 }
+
+export async function trashObjects({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<number> {
+	
+	const response = await axiosClient.post('object/trash', {
+		 ObjectIds : objectIds,
+	});
+
+	return response.data;
+}
