@@ -303,10 +303,50 @@ export async function trashObjects({
 }: {
 	objectIds: string[];
 }): Promise<number> {
-	
 	const response = await axiosClient.post('object/trash', {
-		 ObjectIds : objectIds,
+		ObjectIds: objectIds,
 	});
 
 	return response.data;
-}
+};
+
+export const fetchTrashedIds = async ({
+	pageParam,
+}: {
+	pageParam: string;
+}): Promise<IGetObjects> => {
+	const res = await axiosClient.get('/objects/trashed', {
+		params: { lastId: pageParam, PageSize: NUMBER_OF_OBJECTS_PER_PAGE },
+	});
+	return res.data;
+};
+
+export async function trashRestoreObjects({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<number> {
+	const response = await axiosClient.post('/object/trash/removeObjects', {
+		ObjectIds: objectIds,
+	});
+
+	return response.data;
+};
+
+export async function trashDeletePermamnentObjects({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<number> {
+	const response = await axiosClient.post('/object/trash/deletePermanent', {
+		ObjectIds: objectIds,
+	});
+
+	return response.data;
+};
+
+export async function emptyTrash(): Promise<boolean> {
+	const response = await axiosClient.delete('emptytrash');
+
+	return response.data;
+};
