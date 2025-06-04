@@ -13,6 +13,7 @@ import OverviewPage from './OverviewPage';
 import RegisterPage from './RegisterPage';
 import ResetPasswordPage from './ResetPasswordPage';
 import SettingsPage from './SettingsPage';
+import TrashPage from './TrashPage';
 import UsersPage from './UsersPage';
 
 export default function App() {
@@ -65,6 +66,14 @@ export default function App() {
 						element={
 							<ProtectedRoute>
 								<AdminSettingsPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/trash"
+						element={
+							<ProtectedRoute>
+								<TrashPage />
 							</ProtectedRoute>
 						}
 					/>
