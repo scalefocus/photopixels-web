@@ -28,7 +28,7 @@ import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import { IThumbnail } from 'types/types';
 
-import { fetchImageIds, trashObjects } from '../api/api';
+import { downloadObjectsAsZip, fetchImageIds, trashObjects } from '../api/api';
 import ImageThumbnail from './ImageThumbnail';
 import Loading from './Loading';
 import Preview from './Preview';
@@ -53,6 +53,19 @@ export const ImageGallery: React.FC = () => {
 		mutationFn: trashObjects,
 		onSuccess: () => {
 			toast.success('Object(s) trashed successfully.');
+		},
+		onError: (error) => {
+			toast.error(`Something went wrong: ${error.message}`);
+		},
+	});
+
+	const downloadObjectMutation = useMutation({
+		mutationFn: downloadObjectsAsZip,
+		onMutate: () => {
+			toast.success('Prepare to download items(s)...');
+		},
+		onSuccess: () => {
+			toast.success('Object(s) downloaded successfully.');
 		},
 		onError: (error) => {
 			toast.error(`Something went wrong: ${error.message}`);
@@ -122,9 +135,24 @@ export const ImageGallery: React.FC = () => {
 		);
 	};
 	const handleDownload = () => {
-		// TODO: Implement download logic for selectedImages
-	};
+		downloadObjectMutation.mutate(
+			{ objectIds: selectedImages },
+			{
+				onSuccess: (href) => {
+					// create "a" HTML element with href to file & click
+					const link = document.createElement('a');
+					link.href = href;
+					link.setAttribute('download', 'files.zip'); //or any other extension
+					document.body.appendChild(link);
+					link.click();
 
+					// clean up "a" element & remove ObjectURL
+					document.body.removeChild(link);
+					URL.revokeObjectURL(href);
+				},
+			}
+		);
+	};
 	const theme = useTheme();
 
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);

@@ -310,6 +310,21 @@ export async function trashObjects({
 	return response.data;
 };
 
+export async function downloadObjectsAsZip({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<string> {
+	const res = await axiosClient.post('/object/downloadZip', {
+		ObjectIds: objectIds,
+	},{
+		responseType: 'blob',
+	});
+
+	const data = URL.createObjectURL(res.data);
+	return data;
+};
+
 export const fetchTrashedIds = async ({
 	pageParam,
 }: {
