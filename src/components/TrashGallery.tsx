@@ -310,8 +310,6 @@ export const TrashGallery: React.FC = () => {
 				</AppBar>
 			</Slide>
 
-			{selectedImages.length > 0 && <Toolbar />}
-
 			<Divider sx={{ mb: 2 }} />
 			{!isLoading && hasImages && (
 				<Box

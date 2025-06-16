@@ -248,8 +248,6 @@ export const ImageGallery: React.FC = () => {
 				</AppBar>
 			</Slide>
 
-			{selectedImages.length > 0 && <Toolbar />}
-
 			<Divider sx={{ mb: 2 }} />
 			<Typography
 				color="text.primary"
@@ -261,6 +259,7 @@ export const ImageGallery: React.FC = () => {
 			</Typography>
 			<Grid container spacing={1} columns={{ xs: 3, sm: 4, lg: 6, xl: 8 }}>
 				{hasImages &&
+					!trashObjectMutation.isPending &&
 					data.pages
 						.map((page) => page.properties)
 						.flat()
@@ -304,7 +303,7 @@ export const ImageGallery: React.FC = () => {
 					The gallery has no images. Please upload images.{' '}
 				</Typography>
 			)}
-			{isLoading && <Loading />}
+			{(isLoading || trashObjectMutation.isPending) && <Loading />}
 			{currentImage !== null && imageIds && (
 				<Preview
 					isOpen={previewOpen}
