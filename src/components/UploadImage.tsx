@@ -95,7 +95,7 @@ const Upload: React.FC = () => {
 					color="text.secondary"
 					sx={{ display: { xs: 'none', sm: 'block' } }}
 				>
-					Drag and drop images here or
+					Drag and drop media files here or
 				</Typography>
 
 				<Button
@@ -126,7 +126,7 @@ const Upload: React.FC = () => {
 				</Button>
 				{isPending && (
 					<Typography color="text.secondary">
-						{`Uploading ${selectedFilesCount} image${
+						{`Uploading ${selectedFilesCount} media file${
 							selectedFilesCount > 1 ? 's' : ''
 						}`}
 					</Typography>
