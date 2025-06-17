@@ -56,7 +56,7 @@ const NAVIGATION_ITEMS: Array<{
 		to: '/trash',
 		label: 'Trash',
 		icon: <DeleteOutlineIcon color="primary" />,
-		adminOnly: true,
+		adminOnly: false,
 	},
 	{
 		to: null,
