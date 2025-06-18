@@ -43,7 +43,7 @@ export default function ForgotPasswordPage() {
 				</Box>
 
 				<Typography color="text.secondary" sx={{ mb: 2 }}>
-					Please enter your email addres
+					Please enter your email address
 				</Typography>
 				<form onSubmit={handleSubmit}>
 					<TextField
