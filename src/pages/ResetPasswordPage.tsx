@@ -90,7 +90,7 @@ export default function ResetPasswordPage() {
 				</Box>
 
 				<Typography color="text.secondary" sx={{ mb: 2 }}>
-					Please enter the verification code that was sent to your email addres
+					Please enter the verification code that was sent to your email address
 				</Typography>
 				<form onSubmit={handleSubmit}>
 					<TextField
