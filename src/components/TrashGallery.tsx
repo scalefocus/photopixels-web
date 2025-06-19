@@ -70,7 +70,7 @@ export const TrashGallery: React.FC = () => {
 	const trashDeletePermamnentMutation = useMutation({
 		mutationFn: trashDeletePermamnentObjects,
 		onSuccess: () => {
-			toast.success('Object(s) delete permamnently successfully.');
+			toast.success('Object(s) deleted permanently successfully.');
 		},
 		onError: (error) => {
 			toast.error(`Something went wrong: ${error.message}`);

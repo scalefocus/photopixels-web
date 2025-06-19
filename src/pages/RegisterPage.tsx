@@ -101,7 +101,7 @@ export default function RegisterPage() {
 						required
 						fullWidth
 						id="name"
-						label="Name"
+						label="Username"
 						type="text"
 						autoFocus
 						value={name}

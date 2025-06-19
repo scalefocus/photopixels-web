@@ -81,7 +81,7 @@ const CreateUserPage = () => {
 						required
 						fullWidth
 						id="name"
-						label="Name"
+						label="Username"
 						name="name"
 						type="text"
 						autoFocus
