@@ -138,15 +138,22 @@ export const ImageGallery: React.FC = () => {
 		downloadObjectMutation.mutate(
 			{ objectIds: selectedImages },
 			{
-				onSuccess: (href) => {
-					// create "a" HTML element with href to file & click
+				onSuccess: ({ href, disposition }) => {
+					// Extract filename from Content-Disposition header
+					let filename = 'files.zip';
+					if (disposition) {
+						const match = disposition.match(
+							/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+						);
+						if (match && match[1]) 
+							filename = match[1].replace(/['"]/g, '');
+					}
+
 					const link = document.createElement('a');
 					link.href = href;
-					link.setAttribute('download', 'files.zip'); //or any other extension
+					link.setAttribute('download', filename);
 					document.body.appendChild(link);
 					link.click();
-
-					// clean up "a" element & remove ObjectURL
 					document.body.removeChild(link);
 					URL.revokeObjectURL(href);
 				},

@@ -314,16 +314,18 @@ export async function downloadObjectsAsZip({
 	objectIds,
 }: {
 	objectIds: string[];
-}): Promise<string> {
+}): Promise<{ href: string; disposition: string }> {
 	const res = await axiosClient.post('/object/downloadZip', {
 		ObjectIds: objectIds,
 	},{
 		responseType: 'blob',
 	});
 
-	const data = URL.createObjectURL(res.data);
-	return data;
-};
+	const href = URL.createObjectURL(res.data);
+	const disposition = res.headers['content-disposition'];
+
+	return { href, disposition };
+}
 
 export const fetchTrashedIds = async ({
 	pageParam,
@@ -346,7 +348,7 @@ export async function trashRestoreObjects({
 	});
 
 	return response.data;
-};
+}
 
 export async function trashDeletePermamnentObjects({
 	objectIds,
@@ -358,10 +360,10 @@ export async function trashDeletePermamnentObjects({
 	});
 
 	return response.data;
-};
+}
 
 export async function emptyTrash(): Promise<boolean> {
 	const response = await axiosClient.delete('emptytrash');
 
 	return response.data;
-};
+}
