@@ -36,7 +36,21 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 			toast.success('Password changed successfully.');
 			setState(initialState);
 		},
-		onError: (error) => toast.error(`Something went wrong: ${error.message}`),
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		onError: (error: any) => {
+			// Try to extract and display password validation errors from the response
+			const apiErrors = error?.response?.data;
+			if (apiErrors && typeof apiErrors === 'object') {
+				const messages = Object.values(apiErrors).flat().join('\n');
+				toast.error(messages, {
+					style: { whiteSpace: 'pre-line', minWidth: 560 },
+					duration: 7000,
+				});
+			} else {
+				toast.error(`Something went wrong: ${error.message}`);
+			}
+			return;
+		},
 	});
 
 	const handleOnChange = (event: ChangeEvent<HTMLTextAreaElement>) =>
@@ -58,7 +72,10 @@ export const ResetPassword = ({ email }: { email: IGetUser['email'] }) => {
 		}
 
 		if (password !== confirmPassword) {
-			toast.error('The new password does not match the confirmed password.');
+			toast.error('The new password does not match the confirmed password.', {
+				style: { whiteSpace: 'pre-line', minWidth: 530 },
+				duration: 7000,
+			});
 			return;
 		}
 
