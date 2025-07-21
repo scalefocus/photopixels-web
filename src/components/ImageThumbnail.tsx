@@ -1,9 +1,18 @@
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { Box, IconButton, Skeleton } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { getThumbnail } from 'api/api';
 
-const ImageThumbnail = ({ id, mediaType }: { id: string, mediaType?: string }) => {
+const ImageThumbnail = ({
+	id,
+	mediaType,
+	isFavorite,
+}: {
+	id: string;
+	mediaType?: string;
+	isFavorite?: boolean;
+}) => {
 	const { data: url, isLoading } = useQuery({
 		queryKey: ['getThumbnail', id],
 		queryFn: () => getThumbnail(id),
@@ -11,7 +20,7 @@ const ImageThumbnail = ({ id, mediaType }: { id: string, mediaType?: string }) =
 	});
 
 	return (
-		<Box sx={{width: "100%", aspectRatio: '1/1', position: 'relative'}}>
+		<Box sx={{ width: '100%', aspectRatio: '1/1', position: 'relative' }}>
 			{isLoading ? (
 				<Skeleton variant="rectangular" width="100%" height="100%" />
 			) : (
@@ -25,7 +34,7 @@ const ImageThumbnail = ({ id, mediaType }: { id: string, mediaType?: string }) =
 							objectFit: 'cover',
 						}}
 					/>
-					{ mediaType === "video" && (
+					{mediaType === 'video' && (
 						<Box display="flex" alignItems="center">
 							<IconButton
 								sx={{
@@ -38,7 +47,25 @@ const ImageThumbnail = ({ id, mediaType }: { id: string, mediaType?: string }) =
 								<PlayCircleIcon />
 							</IconButton>
 						</Box>
-				)}
+					)}
+					{isFavorite && (
+						<Box
+							display="flex"
+							alignItems="center"
+							sx={{ position: 'relative' }}
+						>
+							<IconButton
+								sx={{
+									position: 'absolute',
+									bottom: 6,
+									left: -4,
+									color: 'white',
+								}}
+							>
+								<FavoriteIcon />
+							</IconButton>
+						</Box>
+					)}
 				</>
 			)}
 		</Box>

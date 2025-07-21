@@ -1,5 +1,6 @@
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import GroupIcon from '@mui/icons-material/Group';
 import LogoutIcon from '@mui/icons-material/Logout';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -56,6 +57,12 @@ const NAVIGATION_ITEMS: Array<{
 		to: '/trash',
 		label: 'Trash',
 		icon: <DeleteOutlineIcon color="primary" />,
+		adminOnly: false,
+	},
+	{
+		to: '/favorites',
+		label: 'Favorites',
+		icon: <FavoriteIcon color="primary" />,
 		adminOnly: false,
 	},
 	{

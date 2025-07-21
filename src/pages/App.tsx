@@ -6,6 +6,7 @@ import { DashboardLayout } from '../layout/DashboardLayout';
 import AdminSettingsPage from './AdminSettings';
 import CreateUserPage from './CreateUserPage';
 import EditUserPage from './EditUserPage';
+import FavoritesPage from './FavoritesPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
 import LoginPage from './LoginPage';
 import NotFound from './NotFound';
@@ -74,6 +75,14 @@ export default function App() {
 						element={
 							<ProtectedRoute>
 								<TrashPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/favorites"
+						element={
+							<ProtectedRoute>
+								<FavoritesPage />
 							</ProtectedRoute>
 						}
 					/>

@@ -53,7 +53,7 @@ const SelectImageButton: React.FC<SelectImageButtonProps> = ({ selected, onClick
                     return (
                         <CheckCircleOutlineIcon
                             sx={{
-                                color: 'gray',
+                                opacity: 0,
                                 fontSize: 24,
                             }}
                         />

@@ -367,3 +367,38 @@ export async function emptyTrash(): Promise<boolean> {
 
 	return response.data;
 }
+
+export async function addFavorites({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<number> {
+	const response = await axiosClient.post('/object/addFavorites', {
+		ObjectIds: objectIds,
+	});
+
+	return response.data;
+}
+
+export async function removeFavorites({
+	objectIds,
+}: {
+	objectIds: string[];
+}): Promise<number> {
+	const response = await axiosClient.post('/object/removeFavorites', {
+		ObjectIds: objectIds,
+	});
+
+	return response.data;
+}
+
+export const fetchFavoritesIds = async ({
+	pageParam,
+}: {
+	pageParam: string;
+}): Promise<IGetObjects> => {
+	const res = await axiosClient.get('/objects/favorites', {
+		params: { lastId: pageParam, PageSize: NUMBER_OF_OBJECTS_PER_PAGE },
+	});
+	return res.data;
+};
