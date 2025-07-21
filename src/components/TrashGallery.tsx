@@ -9,7 +9,6 @@ import {
 	DialogTitle,
 	Divider,
 	Grid,
-	Paper,
 	Tooltip,
 	Typography,
 } from '@mui/material';
@@ -35,10 +34,9 @@ import {
 	trashDeletePermamnentObjects,
 	trashRestoreObjects,
 } from '../api/api';
-import ImageThumbnail from './ImageThumbnail';
+import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
-import SelectImageButton from './SelectImageButton';
 
 export const TrashGallery: React.FC = () => {
 	const [previewOpen, setPreviewOpen] = useState(false);
@@ -390,30 +388,15 @@ export const TrashGallery: React.FC = () => {
 								key={thumbnail.id}
 								sx={{ position: 'relative' }}
 							>
-								<Paper elevation={0}>
-									<SelectImageButton
-										selected={selectedImages.includes(thumbnail.id)}
-										onClick={(e) => {
-											e.stopPropagation();
-											toggleSelectImage(thumbnail.id);
-										}}
-									/>
-									<div onClick={() => openPreview(index)}>
-										{selectedImages.includes(thumbnail.id) ? (
-											<Box component="section" sx={{ p: 1.5 }}>
-												<ImageThumbnail
-													id={thumbnail.id}
-													mediaType={thumbnail.mediaType}
-												/>
-											</Box>
-										) : (
-											<ImageThumbnail
-												id={thumbnail.id}
-												mediaType={thumbnail.mediaType}
-											/>
-										)}
-									</div>
-								</Paper>
+								<GalleryItemPaper
+									selected={selectedImages.includes(thumbnail.id)}
+									onSelect={(e) => {
+										e.stopPropagation();
+										toggleSelectImage(thumbnail.id);
+									}}
+									onPreview={() => openPreview(index)}
+									thumbnail={thumbnail}
+								/>
 							</Grid>
 						))}
 			</Grid>

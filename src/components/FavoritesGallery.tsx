@@ -1,7 +1,6 @@
+import CancelIcon from '@mui/icons-material/Cancel';
 import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DownloadIcon from '@mui/icons-material/Download';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import {
 	Button,
 	Dialog,
@@ -13,6 +12,7 @@ import {
 	Typography,
 } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Slide from '@mui/material/Slide';
 import { useTheme } from '@mui/material/styles';
@@ -27,12 +27,15 @@ import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import { IThumbnail } from 'types/types';
 
-import { addFavorites, downloadObjectsAsZip, fetchImageIds, trashObjects } from '../api/api';
+import {
+	fetchFavoritesIds,
+	removeFavorites,
+} from '../api/api';
 import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
 
-export const ImageGallery: React.FC = () => {
+export const FavoritesGallery: React.FC = () => {
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const [currentImage, setCurrentImage] = useState<number | null>(null);
 	const [selectedImages, setSelectedImages] = useState<string[]>([]); // <-- add this
@@ -41,39 +44,17 @@ export const ImageGallery: React.FC = () => {
 	const queryClient = useQueryClient();
 
 	const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-		queryKey: ['fetchIds'],
-		queryFn: fetchImageIds,
+		queryKey: ['fetchFavoritesIds'],
+		queryFn: fetchFavoritesIds,
 		initialPageParam: '',
 		getNextPageParam: (lastPage) => lastPage.lastId || null,
 	});
 
-	const trashObjectMutation = useMutation({
-		mutationFn: trashObjects,
+	// mutation for restoring trashed objects
+	const unfavoritesMutation = useMutation({
+		mutationFn: removeFavorites,
 		onSuccess: () => {
-			toast.success('Object(s) trashed successfully.');
-		},
-		onError: (error) => {
-			toast.error(`Something went wrong: ${error.message}`);
-		},
-	});
-
-	const downloadObjectMutation = useMutation({
-		mutationFn: downloadObjectsAsZip,
-		onMutate: () => {
-			toast.success('Prepare to download items(s)...');
-		},
-		onSuccess: () => {
-			toast.success('Object(s) downloaded successfully.');
-		},
-		onError: (error) => {
-			toast.error(`Something went wrong: ${error.message}`);
-		},
-	});
-
-	const favoritesMutation = useMutation({
-		mutationFn: addFavorites,
-		onSuccess: () => {
-			toast.success('Object(s) added to Favorites successfully.');
+			toast.success('Object(s) removed from favorites successfully.');
 		},
 		onError: (error) => {
 			toast.error(`Something went wrong: ${error.message}`);
@@ -131,57 +112,25 @@ export const ImageGallery: React.FC = () => {
 	};
 
 	const handleClearSelection = () => setSelectedImages([]);
-	const handleDelete = () => {
-		trashObjectMutation.mutate(
-			{ objectIds: selectedImages },
-			{
-				onSuccess: () => {
-					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] }); // <-- refresh the gallery
-				},
-			}
-		);
-	};
-	const handleDownload = () => {
-		downloadObjectMutation.mutate(
-			{ objectIds: selectedImages },
-			{
-				onSuccess: ({ href, disposition }) => {
-					// Extract filename from Content-Disposition header
-					let filename = 'files.zip';
-					if (disposition) {
-						const match = disposition.match(
-							/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
-						);
-						if (match && match[1]) 
-							filename = match[1].replace(/['"]/g, '');
-					}
 
-					const link = document.createElement('a');
-					link.href = href;
-					link.setAttribute('download', filename);
-					document.body.appendChild(link);
-					link.click();
-					document.body.removeChild(link);
-					URL.revokeObjectURL(href);
-				},
-			}
-		);
-	};
-	const handleFavorites = () => {
-		favoritesMutation.mutate(
+	// tuka
+	// and clear selection
+
+	const handleUnfavorites = () => {
+		unfavoritesMutation.mutate(
 			{ objectIds: selectedImages },
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] }); // <-- refresh the gallery
+					queryClient.invalidateQueries({ queryKey: ['fetchFavoritesIds'] });
 				},
 			}
 		);
 	};
+
 	const theme = useTheme();
 
-	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const [openUnfavoriteDialog, setOpenUnfavoriteDialog] = useState(false);
 
 	return (
 		<>
@@ -216,62 +165,50 @@ export const ImageGallery: React.FC = () => {
 						<Typography sx={{ flexGrow: 1, fontWeight: 600 }}>
 							{selectedImages.length} selected
 						</Typography>
-						<Tooltip title="Add to Favorites">
-							<IconButton color="inherit" onClick={handleFavorites}>
-								<FavoriteIcon />
-							</IconButton>
-						</Tooltip>
-						<Tooltip title="Download">
-							<IconButton color="inherit" onClick={handleDownload}>
-								<DownloadIcon />
-							</IconButton>
-						</Tooltip>
-						<Tooltip title="Delete">
+						<Tooltip title="Remove from Favorites">
 							<IconButton
 								color="inherit"
-								onClick={() => setOpenDeleteDialog(true)}
+								onClick={() => setOpenUnfavoriteDialog(true)}
 							>
-								<DeleteIcon />
+								<CancelIcon />
 							</IconButton>
 						</Tooltip>
 						<Dialog
-							open={openDeleteDialog}
-							onClose={() => setOpenDeleteDialog(false)}
-							aria-labelledby="delete-dialog-title"
-							aria-describedby="delete-dialog-description"
+							open={openUnfavoriteDialog}
+							onClose={() => setOpenUnfavoriteDialog(false)}
+							aria-labelledby="unfavorite-dialog-title"
+							aria-describedby="unfavorite-dialog-description"
 						>
 							<DialogTitle
-								id="delete-dialog-title"
+								id="unfavorite-dialog-title"
 								sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
 							>
-								<DeleteIcon color="error" sx={{ fontSize: 32 }} />
-								Delete {selectedImages.length}{' '}
+								<CancelIcon sx={{ fontSize: 32 }} />
+								Remove from favororites {selectedImages.length}{' '}
 								{selectedImages.length === 1 ? 'item' : 'items'}?
 							</DialogTitle>
 							<Typography
-								id="delete-dialog-description"
+								id="unfavorite-dialog-description"
 								sx={{ px: 3, pb: 1, color: 'text.secondary' }}
 							>
-								This action will move the selected{' '}
-								{selectedImages.length === 1 ? 'item' : 'items'} to trash. You
-								can restore them from trash later.
+								This action will remove from favororites the selected{' '}
+								{selectedImages.length === 1 ? 'item' : 'items'}.
 							</Typography>
 							<DialogActions>
 								<Button
-									onClick={() => setOpenDeleteDialog(false)}
+									onClick={() => setOpenUnfavoriteDialog(false)}
 									variant="outlined"
 								>
 									Cancel
 								</Button>
 								<Button
 									onClick={() => {
-										handleDelete();
-										setOpenDeleteDialog(false);
+										handleUnfavorites();
+										setOpenUnfavoriteDialog(false);
 									}}
-									color="error"
 									variant="contained"
 								>
-									Move to Trash
+									Remove from Favorites
 								</Button>
 							</DialogActions>
 						</Dialog>
@@ -280,17 +217,9 @@ export const ImageGallery: React.FC = () => {
 			</Slide>
 
 			<Divider sx={{ mb: 2 }} />
-			<Typography
-				color="text.primary"
-				variant="h5"
-				gutterBottom
-				sx={{ fontWeight: 700 }}
-			>
-				Gallery
-			</Typography>
+			<Box sx={{ mt: 3 }} />
 			<Grid container spacing={1} columns={{ xs: 3, sm: 4, lg: 6, xl: 8 }}>
 				{hasImages &&
-					!trashObjectMutation.isPending &&
 					data.pages
 						.map((page) => page.properties)
 						.flat()
@@ -315,11 +244,12 @@ export const ImageGallery: React.FC = () => {
 			</Grid>
 
 			{!isLoading && !hasImages && (
-				<Typography color="text.secondary" gutterBottom sx={{ mt: 3 }}>
-					The gallery has no media objects. Please upload media object.{' '}
+				<Typography color="text.secondary" gutterBottom sx={{ mt: 2 }}>
+					<FavoriteBorderIcon sx={{ fontSize: 28, verticalAlign: 'middle' }} />{' '}
+					No favorites
 				</Typography>
 			)}
-			{(isLoading || trashObjectMutation.isPending) && <Loading />}
+			{isLoading && <Loading />}
 			{currentImage !== null && imageIds && (
 				<Preview
 					isOpen={previewOpen}

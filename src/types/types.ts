@@ -57,6 +57,7 @@ export interface IThumbnail {
 	id: string;
 	dateCreated: string;
 	mediaType?: string;
+	isFavorite?: boolean;
 }
 
 export interface IGetObjects {
