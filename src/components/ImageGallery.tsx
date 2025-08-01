@@ -27,7 +27,13 @@ import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import { IThumbnail } from 'types/types';
 
-import { addFavorites, downloadObjectsAsZip, fetchImageIds, trashObjects } from '../api/api';
+import {
+	addFavorites,
+	downloadObjectsAsZip,
+	fetchImageIds,
+	removeFavorites,
+	trashObjects,
+} from '../api/api';
 import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
@@ -78,6 +84,14 @@ export const ImageGallery: React.FC = () => {
 		onError: (error) => {
 			toast.error(`Something went wrong: ${error.message}`);
 		},
+	});
+
+	const singleAddFavoritesMutation = useMutation({
+		mutationFn: addFavorites,
+	});
+
+	const singleRemoveFavoritesMutation = useMutation({
+		mutationFn: removeFavorites,
 	});
 
 	const lastId = data?.pages.slice(-1)[0].lastId;
@@ -175,6 +189,28 @@ export const ImageGallery: React.FC = () => {
 				onSuccess: () => {
 					handleClearSelection();
 					queryClient.invalidateQueries({ queryKey: ['fetchIds'] }); // <-- refresh the gallery
+				},
+			}
+		);
+	};
+	const handleSingleFavorites = (id: string, actionAdd: boolean) => {
+		if (actionAdd) {
+			singleAddFavoritesMutation.mutate(
+				{ objectIds: [id] },
+				{
+					onSuccess: () => {
+						queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+					},
+				}
+			);
+			return;
+		}
+
+		singleRemoveFavoritesMutation.mutate(
+			{ objectIds: [id] },
+			{
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
 				},
 			}
 		);
@@ -309,6 +345,7 @@ export const ImageGallery: React.FC = () => {
 									}}
 									onPreview={() => openPreview(index)}
 									thumbnail={thumbnail}
+									handleSingleFavorites={handleSingleFavorites}
 								/>
 							</Grid>
 						))}
@@ -329,6 +366,7 @@ export const ImageGallery: React.FC = () => {
 					media={imageIds[currentImage]}
 					disablePrevButton={disablePrevButton}
 					disableNextButton={disableNextButton}
+					handleSingleFavorites={handleSingleFavorites}
 				/>
 			)}
 			<Typography

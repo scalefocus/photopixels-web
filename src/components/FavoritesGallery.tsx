@@ -1,6 +1,7 @@
 import CancelIcon from '@mui/icons-material/Cancel';
 import CloseIcon from '@mui/icons-material/Close';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import HeartBrokenIcon from '@mui/icons-material/HeartBroken';
 import {
 	Button,
 	Dialog,
@@ -27,10 +28,7 @@ import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import { IThumbnail } from 'types/types';
 
-import {
-	fetchFavoritesIds,
-	removeFavorites,
-} from '../api/api';
+import { fetchFavoritesIds, removeFavorites } from '../api/api';
 import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
@@ -128,6 +126,17 @@ export const FavoritesGallery: React.FC = () => {
 		);
 	};
 
+	const handleSingleFavorites = (id: string) => {
+		unfavoritesMutation.mutate(
+			{ objectIds: [id] },
+			{
+				onSuccess: () => {
+					queryClient.invalidateQueries({ queryKey: ['fetchFavoritesIds'] });
+				},
+			}
+		);
+	};
+
 	const theme = useTheme();
 
 	const [openUnfavoriteDialog, setOpenUnfavoriteDialog] = useState(false);
@@ -170,7 +179,7 @@ export const FavoritesGallery: React.FC = () => {
 								color="inherit"
 								onClick={() => setOpenUnfavoriteDialog(true)}
 							>
-								<CancelIcon />
+								<HeartBrokenIcon />
 							</IconButton>
 						</Tooltip>
 						<Dialog
@@ -238,6 +247,7 @@ export const FavoritesGallery: React.FC = () => {
 									}}
 									onPreview={() => openPreview(index)}
 									thumbnail={thumbnail}
+									handleSingleFavorites={handleSingleFavorites}
 								/>
 							</Grid>
 						))}
