@@ -56,7 +56,7 @@ const Upload: React.FC = () => {
 				{
 					onSuccess: () => {
 						toast.success(
-							`${numberOfFiles} image${
+							`${numberOfFiles} media${
 								numberOfFiles > 1 ? 's' : ''
 							} uploaded successfully`
 						);

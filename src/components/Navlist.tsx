@@ -30,9 +30,9 @@ const NAVIGATION_ITEMS: Array<{
 		adminOnly: false,
 	},
 	{
-		to: '/settings',
-		label: 'Settings',
-		icon: <ManageAccountsIcon color="primary" />,
+		to: '/favorites',
+		label: 'Favorites',
+		icon: <FavoriteIcon color="primary" />,
 		adminOnly: false,
 	},
 	{
@@ -48,6 +48,12 @@ const NAVIGATION_ITEMS: Array<{
 		adminOnly: true,
 	},
 	{
+		to: '/settings',
+		label: 'Settings',
+		icon: <ManageAccountsIcon color="primary" />,
+		adminOnly: false,
+	},
+	{
 		to: '/admin-settings',
 		label: 'Admin Settings',
 		icon: <SettingsIcon color="primary" />,
@@ -57,12 +63,6 @@ const NAVIGATION_ITEMS: Array<{
 		to: '/trash',
 		label: 'Trash',
 		icon: <DeleteOutlineIcon color="primary" />,
-		adminOnly: false,
-	},
-	{
-		to: '/favorites',
-		label: 'Favorites',
-		icon: <FavoriteIcon color="primary" />,
 		adminOnly: false,
 	},
 	{
