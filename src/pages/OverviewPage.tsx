@@ -7,7 +7,7 @@ import MainLayout from '../layout/MainLayout';
 
 const OverviewPage = () => {
 	return (
-		<MainLayout title="Overview">
+		<MainLayout title="Gallery">
 			<Box
 				sx={{
 					display: 'flex',

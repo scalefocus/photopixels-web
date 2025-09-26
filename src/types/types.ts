@@ -64,3 +64,11 @@ export interface IGetObjects {
 	lastId: string;
 	properties: IThumbnail[];
 }
+
+export interface ICommonError {
+	response: {
+		data: {
+			errors: Array<string>;
+		};
+	};
+}

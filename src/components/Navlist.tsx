@@ -1,3 +1,4 @@
+import { Folder } from '@mui/icons-material';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -25,7 +26,7 @@ const NAVIGATION_ITEMS: Array<{
 }> = [
 	{
 		to: '/',
-		label: 'Overview',
+		label: 'Gallery',
 		icon: <AnalyticsIcon color="primary" />,
 		adminOnly: false,
 	},
@@ -33,6 +34,24 @@ const NAVIGATION_ITEMS: Array<{
 		to: '/favorites',
 		label: 'Favorites',
 		icon: <FavoriteIcon color="primary" />,
+		adminOnly: false,
+	},
+		{
+		to: '/albums',
+		label: 'Albums',
+		icon: <Folder color="primary" />,
+		adminOnly: false,
+	},
+	{
+		to: '/trash',
+		label: 'Trash',
+		icon: <DeleteOutlineIcon color="primary" />,
+		adminOnly: false,
+	},
+		{
+		to: '/settings',
+		label: 'Settings',
+		icon: <ManageAccountsIcon color="primary" />,
 		adminOnly: false,
 	},
 	{
@@ -48,22 +67,10 @@ const NAVIGATION_ITEMS: Array<{
 		adminOnly: true,
 	},
 	{
-		to: '/settings',
-		label: 'Settings',
-		icon: <ManageAccountsIcon color="primary" />,
-		adminOnly: false,
-	},
-	{
 		to: '/admin-settings',
 		label: 'Admin Settings',
 		icon: <SettingsIcon color="primary" />,
 		adminOnly: true,
-	},
-	{
-		to: '/trash',
-		label: 'Trash',
-		icon: <DeleteOutlineIcon color="primary" />,
-		adminOnly: false,
 	},
 	{
 		to: null,
