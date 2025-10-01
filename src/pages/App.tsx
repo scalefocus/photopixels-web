@@ -104,6 +104,14 @@ export default function App() {
 							</ProtectedRoute>
 						}
 					/>
+					<Route
+						path="/albums/view/:albumId"
+						element={
+							<ProtectedRoute>
+								<AddAlbumPage />
+							</ProtectedRoute>
+						}
+					/>
 				</Route>
 				<Route path="/login" element={<LoginPage />} />
 				<Route path="/register" element={<RegisterPage />} />
