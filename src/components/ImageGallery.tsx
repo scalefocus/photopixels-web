@@ -3,6 +3,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import {
+	Box,
 	Button,
 	Dialog,
 	DialogActions,
@@ -37,6 +38,9 @@ import {
 import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
+import AddToAlbumDialog from './Albums/AddToAlbumDialog';
+import { addObjectsToAlbum } from 'api/albumApi';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 export const ImageGallery: React.FC = () => {
 	const [previewOpen, setPreviewOpen] = useState(false);
@@ -92,6 +96,18 @@ export const ImageGallery: React.FC = () => {
 
 	const singleRemoveFavoritesMutation = useMutation({
 		mutationFn: removeFavorites,
+	});
+
+	const addToAlbumMutation = useMutation({
+		mutationFn: addObjectsToAlbum,
+		onSuccess: () => {
+			toast.success('The images has been added successfully to the album');
+			setSelectedImages([]);
+			setOpenAddToAlbumDialog(false);
+		},
+		onError: (error: any) => {
+			toast.error(`Error adding object to the album: ${error?.message ?? 'Error'}`);
+		},
 	});
 
 	const lastId = data?.pages.slice(-1)[0].lastId;
@@ -167,7 +183,7 @@ export const ImageGallery: React.FC = () => {
 						const match = disposition.match(
 							/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
 						);
-						if (match && match[1]) 
+						if (match && match[1])
 							filename = match[1].replace(/['"]/g, '');
 					}
 
@@ -218,6 +234,13 @@ export const ImageGallery: React.FC = () => {
 	const theme = useTheme();
 
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+	const [openAddToAlbumDialog, setOpenAddToAlbumDialog] = React.useState(false);
+
+	const handleAddToAlbum = (albumId: string) => {
+		if (selectedImages.length === 0) return;
+		addToAlbumMutation.mutate({ albumId, objectIds: selectedImages });
+	};
 
 	return (
 		<>
@@ -316,14 +339,35 @@ export const ImageGallery: React.FC = () => {
 			</Slide>
 
 			<Divider sx={{ mb: 2 }} />
-			<Typography
-				color="text.primary"
-				variant="h5"
-				gutterBottom
-				sx={{ fontWeight: 700 }}
+
+			<Box
+				sx={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					mb: 1,
+				}}
 			>
-				Gallery
-			</Typography>
+				<Typography color="text.primary" variant="h5" sx={{ fontWeight: 700 }}>
+					Gallery
+				</Typography>
+
+				<Tooltip
+					title={selectedImages.length ? 'Add to album' : 'Choose at least one image'}
+				>
+					<span>
+						<Button
+							variant="outlined"
+							startIcon={<LibraryAddIcon />}
+							disabled={selectedImages.length === 0 || addToAlbumMutation.isPending}
+							onClick={() => setOpenAddToAlbumDialog(true)}
+						>
+							Add to Album
+						</Button>
+					</span>
+				</Tooltip>
+			</Box>
+
 			<Grid container spacing={1} columns={{ xs: 3, sm: 4, lg: 6, xl: 8 }}>
 				{hasImages &&
 					!trashObjectMutation.isPending &&
@@ -375,6 +419,14 @@ export const ImageGallery: React.FC = () => {
 				gutterBottom
 				sx={{ fontWeight: 600 }}
 			></Typography>
+
+			<AddToAlbumDialog
+				open={openAddToAlbumDialog}
+				onClose={() => setOpenAddToAlbumDialog(false)}
+				onSelect={handleAddToAlbum}
+				hideSystemAlbums={true}
+				title="Add to"
+			/>
 		</>
 	);
 };

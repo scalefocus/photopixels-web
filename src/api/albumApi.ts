@@ -32,3 +32,11 @@ export const useDeleteAlbum = () =>
             await axiosClient.delete(`album/${id}`);
         },
     });
+
+export async function addObjectsToAlbum(params: { albumId: string; objectIds: string[] }) {
+    const { albumId, objectIds } = params;
+    const { data } = await axiosClient.post(
+        `album/${encodeURIComponent(albumId)}/objects`, objectIds
+    );
+    return data;
+}

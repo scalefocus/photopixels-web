@@ -130,7 +130,7 @@ export const AlbumsList: React.FC = () => {
                                 sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                             >
                                 <DeleteIcon color="error" sx={{ fontSize: 32 }} />
-                                Да изтрия ли {selected.length}{' '}
+                                Confirm deletion of {selected.length}{' '}
                                 {selected.length === 1 ? 'album' : 'albums'}?
                             </DialogTitle>
 
