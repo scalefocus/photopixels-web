@@ -402,18 +402,3 @@ export const fetchFavoritesIds = async ({
 	});
 	return res.data;
 };
-
-export async function addAlbum({
-	name,
-	isSystem
-}: {
-	name: string;
-	isSystem: boolean;
-}): Promise<void> {
-	const res = await axiosClient.post('album', {
-		name,
-		isSystem
-	});
-
-	return res.data;
-}

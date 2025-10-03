@@ -9,7 +9,7 @@ export async function addAlbum({
 }: {
     name: string;
     isSystem: boolean;
-}): Promise<void> {
+}): Promise<Album> {
     const res = await axiosClient.post('album', {
         name,
         isSystem
@@ -42,20 +42,20 @@ export async function addObjectsToAlbum(params: { albumId: string; objectIds: st
     return data;
 }
 
-export const getAlbumItems = async ({albumId}: {albumId: string;}): Promise<IGetObjects> => {
-	const res = await axiosClient.get(`/album/${albumId}/100`);
-	return res.data;
+export const getAlbumItems = async ({ albumId }: { albumId: string; }): Promise<IGetObjects> => {
+    const res = await axiosClient.get(`/album/${albumId}/100`);
+    return res.data;
 };
 
-export const getAlbumById = async ({albumId}: {albumId: string;}): Promise<Album> => {
-	const res = await axiosClient.get(`/album/${albumId}`);
-	return res.data;
+export const getAlbumById = async ({ albumId }: { albumId: string; }): Promise<Album> => {
+    const res = await axiosClient.get(`/album/${albumId}`);
+    return res.data;
 };
 
-export async function updateAlbum({ id, name}: {
+export async function updateAlbum({ id, name }: {
     id: string
     name: string;
 }): Promise<void> {
-    const res = await axiosClient.put('album', {id, name});
+    const res = await axiosClient.put('album', { id, name });
     return res.data;
 }
