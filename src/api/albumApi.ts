@@ -59,3 +59,12 @@ export async function updateAlbum({ id, name }: {
     const res = await axiosClient.put('album', { id, name });
     return res.data;
 }
+
+export async function bulkRemoveObjectsFromAlbum(params: { albumId: string; objectIds: string[] }) {
+  const { albumId, objectIds } = params;
+  const { data } = await axiosClient.post(
+    `/albums/${encodeURIComponent(albumId)}/objects:bulk-delete`,
+    objectIds
+  );
+  return data;
+}

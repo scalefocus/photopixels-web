@@ -2,6 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
 	Box,
 	Button,
@@ -39,7 +40,7 @@ import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
 import AddToAlbumDialog from './Albums/AddToAlbumDialog';
-import { addObjectsToAlbum, getAlbumItems } from 'api/albumApi';
+import { addObjectsToAlbum, bulkRemoveObjectsFromAlbum, getAlbumItems } from 'api/albumApi';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
@@ -50,10 +51,10 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 
 	const queryClient = useQueryClient();
 
-  const albumQueryFn = React.useCallback(
-    (_ctx: any) => getAlbumItems({ albumId: albumId! }),
-    [albumId]
-  );
+	const albumQueryFn = React.useCallback(
+		(_ctx: any) => getAlbumItems({ albumId: albumId! }),
+		[albumId]
+	);
 
 	const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
 		queryKey: ['fetchIds', albumId ?? null],
@@ -109,11 +110,24 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			toast.success('The images has been added successfully to the album');
 			setSelectedImages([]);
 			setOpenAddToAlbumDialog(false);
+			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 		},
 		onError: (error: any) => {
 			toast.error(`Error adding object to the album: ${error?.message ?? 'Error'}`);
 		},
 	});
+
+	const removeFromAlbumMutation = useMutation({
+		mutationFn: bulkRemoveObjectsFromAlbum,
+    	onSuccess: () => {
+      		toast.success('Selected item(s) were removed from the album.');
+      		setSelectedImages([]);
+			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+    	},
+    	onError: (error: any) => {
+      		toast.error(`Error removing from album: ${error?.message ?? 'Error'}`);
+    	},
+  	});
 
 	const lastId = data?.pages.slice(-1)[0].lastId;
 	const imageIds = data?.pages.map((page) => page.properties).flat();
@@ -166,13 +180,14 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	};
 
 	const handleClearSelection = () => setSelectedImages([]);
+
 	const handleDelete = () => {
 		trashObjectMutation.mutate(
 			{ objectIds: selectedImages },
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 				},
 			}
 		);
@@ -209,7 +224,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+          			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 				},
 			}
 		);
@@ -220,7 +235,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 				{ objectIds: [id] },
 				{
 					onSuccess: () => {
-						queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+						queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 					},
 				}
 			);
@@ -231,7 +246,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{ objectIds: [id] },
 			{
 				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 				},
 			}
 		);
@@ -246,6 +261,11 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 		if (selectedImages.length === 0) return;
 		addToAlbumMutation.mutate({ albumId: albumIdToAdd, objectIds: selectedImages });
 	};
+
+	const handleRemoveFromAlbum = () => {
+    	if (!albumId || selectedImages.length === 0) return;
+    	removeFromAlbumMutation.mutate({ albumId, objectIds: selectedImages });
+  	};
 
 	return (
 		<>
@@ -290,6 +310,20 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 								<DownloadIcon />
 							</IconButton>
 						</Tooltip>
+						{albumId && (
+							<Tooltip title="Remove from album">
+								<span>
+								<IconButton
+									color="inherit"
+									onClick={handleRemoveFromAlbum}
+									disabled={removeFromAlbumMutation.isPending}
+									aria-label="Remove from album"
+								>
+									<RemoveCircleOutlineIcon />
+								</IconButton>
+								</span>
+							</Tooltip>
+						)}
 						<Tooltip title="Delete">
 							<IconButton
 								color="inherit"
