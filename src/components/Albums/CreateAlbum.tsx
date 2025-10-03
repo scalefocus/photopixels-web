@@ -64,7 +64,6 @@ export const CreateAlbum: React.FC = () => {
       return;
     }
 
-    // Create mode
     addAlbumMutation.mutate({ name, isSystem: false });
   };
 
