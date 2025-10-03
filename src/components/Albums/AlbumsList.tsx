@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink } from "react-router-dom";
-import { getAlbums, useDeleteAlbum } from 'api/albumApi';
+import { getAlbums, deleteAlbum } from 'api/albumApi';
 import { AppBar, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, Grid, IconButton, Paper, Slide, Stack, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Album } from "models/Album";
@@ -12,7 +12,7 @@ export const AlbumsList: React.FC = () => {
     const theme = useTheme();
     const queryClient = useQueryClient();
     const { data: albums, isLoading, isError, error } = getAlbums();
-    const deleteAlbum = useDeleteAlbum();
+    const deleteAlbumMutation = deleteAlbum();
     const [selected, setSelected] = useState<string[]>([]);
     const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
@@ -40,7 +40,7 @@ export const AlbumsList: React.FC = () => {
         }
 
         if (confirm(`Are you sure you want to delete "${a.name}"?. The files in the albums will be still available in your feed?`)) {
-            deleteAlbum.mutate(id, {
+            deleteAlbumMutation.mutate(id, {
                 onSuccess: () => {
                     toast.success(`The album "${a.name}" has been successfully deleted.`);
                     queryClient.invalidateQueries({ queryKey: ['getAlbums'] });
@@ -67,7 +67,7 @@ export const AlbumsList: React.FC = () => {
 
         try {
             for (const id of deletable) {
-                await deleteAlbum.mutateAsync(id);
+                await deleteAlbumMutation.mutateAsync(id);
             }
             toast.success(`Deleted: ${deletable.length} albums.`);
             clearSelection();
@@ -113,7 +113,7 @@ export const AlbumsList: React.FC = () => {
                             <IconButton
                                 color="inherit"
                                 onClick={() => setOpenDeleteDialog(true)}
-                                disabled={deleteAlbum.isPending}
+                                disabled={deleteAlbumMutation.isPending}
                             >
                                 <DeleteIcon />
                             </IconButton>
@@ -212,7 +212,7 @@ export const AlbumsList: React.FC = () => {
                                         <IconButton
                                             size="small"
                                             onClick={() => handleSingleDelete(album.id)}
-                                            disabled={deleteAlbum.isPending || album.isSystem}
+                                            disabled={deleteAlbumMutation.isPending || album.isSystem}
                                             aria-label="Delete"
                                         >
                                             <DeleteIcon fontSize="small" />

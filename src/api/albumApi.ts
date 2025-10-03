@@ -27,7 +27,7 @@ export const getAlbums = () =>
         },
     });
 
-export const useDeleteAlbum = () =>
+export const deleteAlbum = () =>
     useMutation({
         mutationFn: async (id: string) => {
             await axiosClient.delete(`album/${id}`);
