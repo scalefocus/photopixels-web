@@ -1,78 +1,150 @@
-import { Alert, Box, Button, Snackbar, TextField } from '@mui/material';
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { Alert, Box, Button, Snackbar, TextField, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { ICommonError } from 'types/types';
-import { addAlbum } from 'api/albumApi';
+import { addAlbum, getAlbumById, updateAlbum } from 'api/albumApi';
+import { useParams } from 'react-router-dom';
 
 export const CreateAlbum: React.FC = () => {
-    const [showMessage, setShowMessage] = useState(false);
-    const [name, setName] = useState('');
-    const [error, setError] = useState<Array<string> | null>(null);
+  const { albumId } = useParams<{ albumId?: string }>();
+  const isEditMode = Boolean(albumId);
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        addAlbumMutation.mutate({ name, isSystem: false });
-    };
+  const [showMessage, setShowMessage] = useState(false);
+  const [name, setName] = useState('');
+  const [error, setError] = useState<Array<string> | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-    const addAlbumMutation = useMutation({
-        mutationFn: addAlbum,
-        onSuccess: () => {
-            setShowMessage(true),
-                setName('')
-        },
-        onError: (err: ICommonError) => {
-            const { errors } = err.response.data;
-            setError(Object.values(errors));
-        },
-    });
+  const albumQuery = useQuery({
+    queryKey: ['album', albumId],
+    queryFn: () => getAlbumById({ albumId: albumId! }),
+    enabled: isEditMode,
+  });
 
-    return (
-        <>
-            <Box
-                sx={{
-                    display: 'flex',
-                    direction: 'row',
-                    justifyContent: 'space-between',
-                    maxWidth: '700px',
-                }}
-            >
-                <Snackbar
-                    open={showMessage}
-                    autoHideDuration={3000}
-                    onClose={() => setShowMessage(false)}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                >
-                    <Alert severity="success" sx={{ width: '100%' }}>
-                        Album has been created.
-                    </Alert>
-                </Snackbar>
-                <form onSubmit={handleSubmit}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="name"
-                        label="Name"
-                        name="name"
-                        type="text"
-                        autoFocus
-                        value={name}
-                        onChange={(event) => setName(event.target.value)}
-                    />
-                    <Button
-                        disabled={addAlbumMutation.isPending}
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2, mb: 2 }}
-                    >
-                        Create Album
-                    </Button>
+  useEffect(() => {
+    if (albumQuery.data?.name) {
+      setName(albumQuery.data.name);
+    }
+  }, [albumQuery.data?.name]);
 
-                </form>
+  const addAlbumMutation = useMutation({
+    mutationFn: addAlbum,
+    onSuccess: () => {
+      setShowMessage(true);
+      setName('');
+      setError(null);
+    },
+    onError: (err: ICommonError) => {
+      const { errors } = err.response.data;
+      setError(Object.values(errors));
+    },
+  });
+
+  const updateAlbumMutation = useMutation({
+    mutationFn: (payload: { id: string; name: string }) => updateAlbum(payload),
+    onSuccess: () => {
+      setShowMessage(true);
+      setIsEditing(false);
+      setError(null);
+    },
+    onError: (err: ICommonError) => {
+      const { errors } = err.response.data;
+      setError(Object.values(errors));
+    },
+  });
+
+  const isBusy = addAlbumMutation.isPending || updateAlbumMutation.isPending;
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+
+    if (isEditMode) {
+      if (!albumId) return;
+      updateAlbumMutation.mutate({ id: albumId, name });
+      return;
+    }
+
+    // Create mode
+    addAlbumMutation.mutate({ name, isSystem: false });
+  };
+
+  return (
+    <>
+      <Snackbar
+        open={showMessage}
+        autoHideDuration={3000}
+        onClose={() => setShowMessage(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert severity="success" sx={{ width: '100%' }}>
+          {isEditMode ? 'Album has been updated.' : 'Album has been created.'}
+        </Alert>
+      </Snackbar>
+
+      <Box
+        sx={{
+          display: 'flex',
+          direction: 'row',
+          justifyContent: 'space-between',
+          maxWidth: '700px',
+        }}
+      >
+        <form onSubmit={handleSubmit} style={{ width: '100%' }}>
+          {error?.length ? (
+            <Box sx={{ mb: 1 }}>
+              {error.map((e, i) => (
+                <Alert key={i} severity="error" sx={{ mb: 1 }}>
+                  {e}
+                </Alert>
+              ))}
             </Box>
-        </>
-    );
+          ) : null}
+
+          {isEditMode && !isEditing ? (
+            <Box
+              sx={{ py: 1.5, cursor: 'text' }}
+              onClick={() => setIsEditing(true)}
+              title="Click to edit the name"
+            >
+              <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                Album name
+              </Typography>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                {albumQuery.isLoading ? 'Loading…' : name || '—'}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                (Click to edit)
+              </Typography>
+            </Box>
+          ) : (
+            <TextField
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Name"
+              name="name"
+              type="text"
+              autoFocus={!isEditMode}
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              disabled={albumQuery.isLoading}
+            />
+          )}
+
+          <Button
+            disabled={isBusy || albumQuery.isLoading}
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            sx={{ mt: 2, mb: 2 }}
+          >
+            {isEditMode ? 'Save Changes' : 'Create Album'}
+          </Button>
+        </form>
+      </Box>
+    </>
+  );
 };

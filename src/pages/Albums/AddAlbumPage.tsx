@@ -14,7 +14,7 @@ const AddAlbumPage = () => {
 			{hasAlbumId && (
 				<>
 					<UploadImage />
-					<ImageGallery />
+					<ImageGallery albumId={albumId}  />
 				</>
 			)}
 		</MainLayout>

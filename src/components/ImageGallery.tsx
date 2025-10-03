@@ -39,22 +39,27 @@ import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
 import AddToAlbumDialog from './Albums/AddToAlbumDialog';
-import { addObjectsToAlbum } from 'api/albumApi';
+import { addObjectsToAlbum, getAlbumItems } from 'api/albumApi';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
-export const ImageGallery: React.FC = () => {
+export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	const [previewOpen, setPreviewOpen] = useState(false);
 	const [currentImage, setCurrentImage] = useState<number | null>(null);
-	const [selectedImages, setSelectedImages] = useState<string[]>([]); // <-- add this
+	const [selectedImages, setSelectedImages] = useState<string[]>([]);
 	const { ref, inView } = useInView();
 
 	const queryClient = useQueryClient();
 
+  const albumQueryFn = React.useCallback(
+    (_ctx: any) => getAlbumItems({ albumId: albumId! }),
+    [albumId]
+  );
+
 	const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-		queryKey: ['fetchIds'],
-		queryFn: fetchImageIds,
+		queryKey: ['fetchIds', albumId ?? null],
+    	queryFn: albumId ? albumQueryFn : fetchImageIds,
 		initialPageParam: '',
-		getNextPageParam: (lastPage) => lastPage.lastId || null,
+    	getNextPageParam: (lastPage) => lastPage.lastId || null,
 	});
 
 	const trashObjectMutation = useMutation({
@@ -112,7 +117,7 @@ export const ImageGallery: React.FC = () => {
 
 	const lastId = data?.pages.slice(-1)[0].lastId;
 	const imageIds = data?.pages.map((page) => page.properties).flat();
-	const lastImage = data?.pages.slice(-1)[0].properties?.slice(-1)[0].id;
+	const lastImage = data?.pages.slice(-1)[0].properties?.slice(-1)[0]?.id;
 	const numberOfImages = imageIds?.length || 0;
 	const hasNewPage = hasNextPage && lastImage !== lastId;
 	const hasImages = data?.pages && data?.pages[0].properties?.length > 0;
@@ -121,7 +126,7 @@ export const ImageGallery: React.FC = () => {
 		if (inView && hasNewPage) {
 			fetchNextPage();
 		}
-	}, [inView]);
+	}, [inView, hasNewPage, fetchNextPage]);
 
 	const openPreview = (index: number) => {
 		setCurrentImage(index);
@@ -167,7 +172,7 @@ export const ImageGallery: React.FC = () => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] }); // <-- refresh the gallery
+					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
 				},
 			}
 		);
@@ -204,7 +209,7 @@ export const ImageGallery: React.FC = () => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds'] }); // <-- refresh the gallery
+					queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
 				},
 			}
 		);
@@ -237,9 +242,9 @@ export const ImageGallery: React.FC = () => {
 
 	const [openAddToAlbumDialog, setOpenAddToAlbumDialog] = React.useState(false);
 
-	const handleAddToAlbum = (albumId: string) => {
+	const handleAddToAlbum = (albumIdToAdd: string) => {
 		if (selectedImages.length === 0) return;
-		addToAlbumMutation.mutate({ albumId, objectIds: selectedImages });
+		addToAlbumMutation.mutate({ albumId: albumIdToAdd, objectIds: selectedImages });
 	};
 
 	return (
@@ -352,20 +357,22 @@ export const ImageGallery: React.FC = () => {
 					Gallery
 				</Typography>
 
-				<Tooltip
-					title={selectedImages.length ? 'Add to album' : 'Choose at least one image'}
-				>
-					<span>
-						<Button
-							variant="outlined"
-							startIcon={<LibraryAddIcon />}
-							disabled={selectedImages.length === 0 || addToAlbumMutation.isPending}
-							onClick={() => setOpenAddToAlbumDialog(true)}
-						>
-							Add to Album
-						</Button>
-					</span>
-				</Tooltip>
+				{selectedImages.length > 0 && (
+					<Tooltip
+						title="Add to album"
+					>
+						<span>
+							<Button
+								variant="outlined"
+								startIcon={<LibraryAddIcon />}
+								disabled={addToAlbumMutation.isPending}
+								onClick={() => setOpenAddToAlbumDialog(true)}
+							>
+								Add to Album
+							</Button>
+						</span>
+					</Tooltip>
+				)}
 			</Box>
 
 			<Grid container spacing={1} columns={{ xs: 3, sm: 4, lg: 6, xl: 8 }}>
