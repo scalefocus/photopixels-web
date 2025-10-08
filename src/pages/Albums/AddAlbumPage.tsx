@@ -24,7 +24,7 @@ const AddAlbumPage = () => {
 				toast.success('Album deleted.');
 				navigate('/albums');
 			},
-			onError: (err: any) => {
+			onError: (err) => {
 				toast.error(`Error deleting album: ${err?.message ?? 'Error'}`);
 			},
 		});

@@ -66,8 +66,6 @@ const Upload: React.FC = () => {
 			//get uploaded object ids
 			const uploadedIds: string[] = [];
 			for (const r of results) {
-				// eslint-disable-next-line no-console
-				console.log('results', results)
 				if (r.status === 'fulfilled') {
 					const res: any = r.value;
 					const newId = res?.id ?? null;
@@ -81,8 +79,9 @@ const Upload: React.FC = () => {
 			}
 
 			toast.success(`${numberOfFiles} media${numberOfFiles > 1 ? 's' : ''} uploaded successfully`);
-		} catch (e: any) {
-			toast.error(`Error during upload: ${e?.message ?? 'Error'}`);
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			toast.error(`Error during upload: ${msg}`);
 		} finally {
 			queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
 			if (albumId) {

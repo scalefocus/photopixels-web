@@ -52,7 +52,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	const queryClient = useQueryClient();
 
 	const albumQueryFn = React.useCallback(
-		(_ctx: any) => getAlbumItems({ albumId: albumId! }),
+		() => getAlbumItems({ albumId: albumId! }),
 		[albumId]
 	);
 
@@ -112,7 +112,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			setOpenAddToAlbumDialog(false);
 			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 		},
-		onError: (error: any) => {
+		onError: (error) => {
 			toast.error(`Error adding object to the album: ${error?.message ?? 'Error'}`);
 		},
 	});
@@ -124,7 +124,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
       		setSelectedImages([]);
 			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
     	},
-    	onError: (error: any) => {
+    	onError: (error) => {
       		toast.error(`Error removing from album: ${error?.message ?? 'Error'}`);
     	},
   	});

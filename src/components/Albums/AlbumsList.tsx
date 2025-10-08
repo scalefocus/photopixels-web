@@ -45,8 +45,9 @@ export const AlbumsList: React.FC = () => {
                     toast.success(`The album "${a.name}" has been successfully deleted.`);
                     queryClient.invalidateQueries({ queryKey: ['getAlbums'] });
                 },
-                onError: (err: any) => {
-                    toast.error(`Error during album deletion: ${err?.message ?? 'Error'}`);
+                onError: (err) => {
+                    const msg = err instanceof Error ? err.message : String(err);
+                    toast.error(`Error during album deletion: ${msg ?? 'Error'}`);
                 },
             });
         }
@@ -72,8 +73,9 @@ export const AlbumsList: React.FC = () => {
             toast.success(`Deleted: ${deletable.length} albums.`);
             clearSelection();
             queryClient.invalidateQueries({ queryKey: ['getAlbums'] });
-        } catch (err: any) {
-            toast.error(`Error during album deletion: ${err?.message ?? 'Error'}`);
+        } catch (err) {
+            const msg = err instanceof Error ? err.message : String(err);
+            toast.error(`Error during album deletion: ${msg}`);
         } finally {
             setOpenDeleteDialog(false);
         }
