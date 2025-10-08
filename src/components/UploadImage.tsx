@@ -8,14 +8,14 @@ import {
 	Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addObjectsToAlbum } from 'api/albumApi';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 import { IUploadError } from 'types/types';
 
 import { uploadImage } from '../api/api';
 import { generateImageHash } from '../utils/utils';
-import { addObjectsToAlbum } from 'api/albumApi';
-import { useParams } from 'react-router-dom';
 
 const Upload: React.FC = () => {
 	const [selectedFilesCount, setSelectedFilesCount] = useState(0);

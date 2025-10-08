@@ -2,6 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
 	Box,
@@ -24,6 +25,7 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query';
+import { addObjectsToAlbum, bulkRemoveObjectsFromAlbum, getAlbumItems } from 'api/albumApi';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
@@ -36,12 +38,10 @@ import {
 	removeFavorites,
 	trashObjects,
 } from '../api/api';
+import AddToAlbumDialog from './Albums/AddToAlbumDialog';
 import GalleryItemPaper from './GalleryItemPaper';
 import Loading from './Loading';
 import Preview from './Preview';
-import AddToAlbumDialog from './Albums/AddToAlbumDialog';
-import { addObjectsToAlbum, bulkRemoveObjectsFromAlbum, getAlbumItems } from 'api/albumApi';
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 
 export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	const [previewOpen, setPreviewOpen] = useState(false);
@@ -391,9 +391,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 					Gallery
 				</Typography>
 
-				{selectedImages.length > 0 && (
+				{selectedImages.length > 0 && !albumId && (
 					<Tooltip
-						title="Add to album"
+						title="Add to Album"
 					>
 						<span>
 							<Button

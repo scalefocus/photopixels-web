@@ -1,8 +1,8 @@
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import { Box, Button, Typography } from "@mui/material";
 import { AlbumsList } from "components/Albums/AlbumsList";
 import MainLayout from "layout/MainLayout";
 import { Link as RouterLink } from "react-router-dom";
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 
 const AlbumPage = () => {

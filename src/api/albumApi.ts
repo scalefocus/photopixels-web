@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axiosClient from "./axios";
 import { Album, AlbumsResponse } from "models/Album";
 import { IGetObjects } from "types/types";
+
+import axiosClient from "./axios";
 
 export async function addAlbum({
     name,

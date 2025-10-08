@@ -1,11 +1,11 @@
-import * as React from 'react';
-import {
-    Dialog, DialogTitle, DialogContent, List, ListItemButton,
-    ListItemText, ListItemIcon, CircularProgress, Typography
-} from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
+import {
+CircularProgress,     Dialog, DialogContent, DialogTitle, List, ListItemButton,
+ListItemIcon,     ListItemText, Typography
+} from '@mui/material';
 import { getAlbums } from 'api/albumApi';
 import { Album } from 'models/Album';
+import * as React from 'react';
 
 type Props = {
     open: boolean;

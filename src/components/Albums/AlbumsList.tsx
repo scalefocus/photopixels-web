@@ -1,12 +1,12 @@
-import { useQueryClient } from '@tanstack/react-query';
-import { Link as RouterLink } from "react-router-dom";
-import { getAlbums, deleteAlbum } from 'api/albumApi';
-import { AppBar, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, Grid, IconButton, Paper, Slide, Stack, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
-import { useMemo, useState } from 'react';
-import { Album } from "models/Album";
-import toast from 'react-hot-toast';
-import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { AppBar, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, Grid, IconButton, Paper, Slide, Stack, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { deleteAlbum,getAlbums } from 'api/albumApi';
+import { Album } from "models/Album";
+import { useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link as RouterLink } from "react-router-dom";
 
 export const AlbumsList: React.FC = () => {
     const theme = useTheme();

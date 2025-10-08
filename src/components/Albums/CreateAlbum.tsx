@@ -1,9 +1,9 @@
-import { Alert, Box, Button, Snackbar, TextField, Typography } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { Alert, Box, Button, ClickAwayListener, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, TextField, Typography } from '@mui/material';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { ICommonError } from 'types/types';
 import { addAlbum, getAlbumById, updateAlbum } from 'api/albumApi';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ICommonError } from 'types/types';
 
 export const CreateAlbum: React.FC = () => {
     const { albumId } = useParams<{ albumId?: string }>();
@@ -14,6 +14,8 @@ export const CreateAlbum: React.FC = () => {
     const [name, setName] = useState('');
     const [error, setError] = useState<Array<string> | null>(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [confirmOpenDiscardChanges, setOpenDiscardChanges] = useState(false);
+
 
     const albumQuery = useQuery({
         queryKey: ['album', albumId],
@@ -49,6 +51,7 @@ export const CreateAlbum: React.FC = () => {
             setShowMessage(true);
             setIsEditing(false);
             setError(null);
+            setName((prev) => prev.trim());
         },
         onError: (err: ICommonError) => {
             const { errors } = err.response.data;
@@ -78,6 +81,33 @@ export const CreateAlbum: React.FC = () => {
         ? (!albumQuery.isLoading && isEditing && trimmed !== '' && trimmed !== originalName)
         : trimmed !== '';
 
+    const exitEditAlbumName = () => {
+        if (!isEditMode) return;
+        if (trimmed !== (originalName ?? '').trim()) {
+            setOpenDiscardChanges(true);
+        } else {
+            setIsEditing(false);
+        }
+    };
+
+    const handleClickAway = () => {
+        if (confirmOpenDiscardChanges || isBusy) return;
+        exitEditAlbumName();
+    };
+
+    const handleConfirmSaveAlbum = () => {
+        setOpenDiscardChanges(false);
+        if (!albumId) { setIsEditing(false); return; }
+        updateAlbumMutation.mutate({ id: albumId, name: trimmed });
+    };
+
+    const handleDiscardChanges = () => {
+        setOpenDiscardChanges(false);
+        setName(originalName ?? '');
+        setIsEditing(false);
+        setError(null);
+    };
+
     return (
         <>
             <Snackbar
@@ -90,6 +120,17 @@ export const CreateAlbum: React.FC = () => {
                     {isEditMode ? 'Album has been updated.' : 'Album has been created.'}
                 </Alert>
             </Snackbar>
+
+            <Dialog open={confirmOpenDiscardChanges} onClose={handleDiscardChanges}>
+                <DialogTitle>Save changes?</DialogTitle>
+                <DialogContent>
+                    The name of the album has been changed. Do you want me to save it?
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDiscardChanges} disabled={isBusy}>No</Button>
+                    <Button onClick={handleConfirmSaveAlbum} disabled={isBusy} autoFocus>Yes</Button>
+                </DialogActions>
+            </Dialog>
 
             <Box
                 sx={{
@@ -116,9 +157,6 @@ export const CreateAlbum: React.FC = () => {
                             onClick={() => setIsEditing(true)}
                             title="Click to edit the name"
                         >
-                            <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
-                                Album name
-                            </Typography>
                             <Typography variant="h6" sx={{ fontWeight: 600 }}>
                                 {albumQuery.isLoading ? 'Loading…' : name || '—'}
                             </Typography>
@@ -127,33 +165,42 @@ export const CreateAlbum: React.FC = () => {
                             </Typography>
                         </Box>
                     ) : (
-                        <TextField
-                            variant="outlined"
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="name"
-                            label="Name"
-                            name="name"
-                            type="text"
-                            autoFocus={!isEditMode}
-                            value={name}
-                            onChange={(event) => setName(event.target.value)}
-                            disabled={albumQuery.isLoading}
-                        />
-                    )}
+                        <ClickAwayListener onClickAway={handleClickAway}>
+                            <Box>
+                                <TextField
+                                    variant="outlined"
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    label="Name"
+                                    name="name"
+                                    type="text"
+                                    autoFocus={!isEditMode}
+                                    value={name}
+                                    onChange={(event) => setName(event.target.value)} onKeyDown={(e) => {
+                                        if (e.key === 'Escape') {
+                                            e.preventDefault();
+                                            handleClickAway();
+                                        }
+                                    }}
+                                    disabled={albumQuery.isLoading || isBusy}
+                                />
 
-                    {showSubmitButton && (
-                        <Button
-                            disabled={isBusy || albumQuery.isLoading}
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            sx={{ mt: 2, mb: 2 }}
-                        >
-                            {isEditMode ? 'Save Changes' : 'Create Album'}
-                        </Button>
+                                {showSubmitButton && (
+                                    <Button
+                                        disabled={isBusy || albumQuery.isLoading}
+                                        type="submit"
+                                        fullWidth
+                                        variant="contained"
+                                        color="primary"
+                                        sx={{ mt: 2, mb: 2 }}
+                                    >
+                                        {isEditMode ? 'Save Changes' : 'Create Album'}
+                                    </Button>
+                                )}
+                            </Box>
+                        </ClickAwayListener>
                     )}
                 </form>
             </Box>

@@ -1,12 +1,13 @@
-import MainLayout from '../../layout/MainLayout';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Box, Button, Tooltip, Typography } from '@mui/material';
+import { deleteAlbum } from 'api/albumApi';
+import { CreateAlbum } from 'components/Albums/CreateAlbum';
 import { ImageGallery } from 'components/ImageGallery';
 import UploadImage from 'components/UploadImage';
-import { CreateAlbum } from 'components/Albums/CreateAlbum';
-import { useNavigate, useParams } from 'react-router-dom';
-import { deleteAlbum } from 'api/albumApi';
 import toast from 'react-hot-toast';
-import { Box, Button, Tooltip, Typography } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { useNavigate, useParams } from 'react-router-dom';
+
+import MainLayout from '../../layout/MainLayout';
 
 const AddAlbumPage = () => {
 	const { albumId } = useParams<{ albumId?: string }>();
@@ -46,7 +47,7 @@ const AddAlbumPage = () => {
 									onClick={handleDelete}
 									disabled={delAlbumMutation.isPending}
 								>
-									Delete
+									Delete Album
 								</Button>
 							</span>
 						</Tooltip>
