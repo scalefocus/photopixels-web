@@ -51,16 +51,16 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 
 	const queryClient = useQueryClient();
 
-	const albumQueryFn = React.useCallback(
-		() => getAlbumItems({ albumId: albumId! }),
-		[albumId]
-	);
+	const albumQueryFn = React.useCallback(() => {
+		if (!albumId) throw new Error('Missing albumId');
+		return getAlbumItems({ albumId });
+	}, [albumId]);
 
 	const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
 		queryKey: ['fetchIds', albumId ?? null],
-    	queryFn: albumId ? albumQueryFn : fetchImageIds,
+		queryFn: albumId ? albumQueryFn : fetchImageIds,
 		initialPageParam: '',
-    	getNextPageParam: (lastPage) => lastPage.lastId || null,
+		getNextPageParam: (lastPage) => lastPage.lastId || null,
 	});
 
 	const trashObjectMutation = useMutation({
@@ -119,15 +119,15 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 
 	const removeFromAlbumMutation = useMutation({
 		mutationFn: bulkRemoveObjectsFromAlbum,
-    	onSuccess: () => {
-      		toast.success('Selected item(s) were removed from the album.');
-      		setSelectedImages([]);
+		onSuccess: () => {
+			toast.success('Selected item(s) were removed from the album.');
+			setSelectedImages([]);
 			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
-    	},
-    	onError: (error) => {
-      		toast.error(`Error removing from album: ${error?.message ?? 'Error'}`);
-    	},
-  	});
+		},
+		onError: (error) => {
+			toast.error(`Error removing from album: ${error?.message ?? 'Error'}`);
+		},
+	});
 
 	const lastId = data?.pages.slice(-1)[0].lastId;
 	const imageIds = data?.pages.map((page) => page.properties).flat();
@@ -224,7 +224,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-          			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
 				},
 			}
 		);
@@ -263,9 +263,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	};
 
 	const handleRemoveFromAlbum = () => {
-    	if (!albumId || selectedImages.length === 0) return;
-    	removeFromAlbumMutation.mutate({ albumId, objectIds: selectedImages });
-  	};
+		if (!albumId || selectedImages.length === 0) return;
+		removeFromAlbumMutation.mutate({ albumId, objectIds: selectedImages });
+	};
 
 	return (
 		<>
@@ -313,14 +313,14 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 						{albumId && (
 							<Tooltip title="Remove from album">
 								<span>
-								<IconButton
-									color="inherit"
-									onClick={handleRemoveFromAlbum}
-									disabled={removeFromAlbumMutation.isPending}
-									aria-label="Remove from album"
-								>
-									<RemoveCircleOutlineIcon />
-								</IconButton>
+									<IconButton
+										color="inherit"
+										onClick={handleRemoveFromAlbum}
+										disabled={removeFromAlbumMutation.isPending}
+										aria-label="Remove from album"
+									>
+										<RemoveCircleOutlineIcon />
+									</IconButton>
 								</span>
 							</Tooltip>
 						)}

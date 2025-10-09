@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { addObjectsToAlbum } from 'api/albumApi';
+import { UploadImageResponse } from 'models/UploadImageResponse';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
@@ -67,7 +68,7 @@ const Upload: React.FC = () => {
 			const uploadedIds: string[] = [];
 			for (const r of results) {
 				if (r.status === 'fulfilled') {
-					const res: any = r.value;
+					const res: UploadImageResponse = r.value;
 					const newId = res?.id ?? null;
 					if (newId) uploadedIds.push(newId);
 				}

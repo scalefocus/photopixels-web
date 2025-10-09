@@ -18,9 +18,12 @@ export const CreateAlbum: React.FC = () => {
 
 
     const albumQuery = useQuery({
-        queryKey: ['album', albumId],
-        queryFn: () => getAlbumById({ albumId: albumId! }),
+        queryKey: ['album', albumId] as const,
         enabled: isEditMode,
+        queryFn: () => {
+            if (!albumId) throw new Error('Missing albumId');
+            return getAlbumById({ albumId: albumId });
+        },
     });
 
     useEffect(() => {
