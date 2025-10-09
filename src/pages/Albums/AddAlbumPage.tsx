@@ -1,6 +1,6 @@
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, IconButton, Tooltip, Typography } from '@mui/material';
+import { Button, IconButton, Tooltip } from '@mui/material';
 import { deleteAlbum } from 'api/albumApi';
 import { CreateAlbum } from 'components/Albums/CreateAlbum';
 import { ImageGallery } from 'components/ImageGallery';
