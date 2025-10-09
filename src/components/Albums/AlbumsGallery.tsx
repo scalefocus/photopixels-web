@@ -8,7 +8,7 @@ import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Link as RouterLink } from "react-router-dom";
 
-export const AlbumsList: React.FC = () => {
+export const AlbumsGallery: React.FC = () => {
     const theme = useTheme();
     const queryClient = useQueryClient();
     const { data: albums, isLoading, isError, error } = getAlbums();

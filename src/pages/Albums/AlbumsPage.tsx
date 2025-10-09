@@ -1,24 +1,15 @@
 import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
-import { Box, Button, Typography } from "@mui/material";
-import { AlbumsList } from "components/Albums/AlbumsList";
+import { Button } from "@mui/material";
+import { AlbumsGallery } from "components/Albums/AlbumsGallery";
 import MainLayout from "layout/MainLayout";
 import { Link as RouterLink } from "react-router-dom";
 
 
 const AlbumPage = () => {
 	return (
-		<MainLayout title="Albums">
-			<Box
-				sx={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					mb: { xs: 1, md: 2 },
-				}}
-			>
-				<Typography variant="h5" sx={{ fontWeight: 700 }}>
-					Albums
-				</Typography>
+		<MainLayout
+			title="Albums"
+			actions={
 				<Button
 					component={RouterLink}
 					to="/albums/add"
@@ -27,19 +18,9 @@ const AlbumPage = () => {
 				>
 					Create Album
 				</Button>
-			</Box>
-
-			<Box
-				sx={{
-					display: "flex",
-					flexDirection: { xs: "column", sm: "row" },
-					justifyContent: "space-between",
-					gap: "10px",
-					mb: { xs: 1, md: 4 },
-				}}
-			>
-				<AlbumsList />
-			</Box>
+			}
+		>
+			<AlbumsGallery />
 		</MainLayout>
 	);
 };

@@ -171,12 +171,13 @@ export const CreateAlbum: React.FC = () => {
                         <ClickAwayListener onClickAway={handleClickAway}>
                             <Box>
                                 <TextField
+                                    placeholder='Add an album title here...'
                                     variant="outlined"
                                     margin="normal"
                                     required
                                     fullWidth
                                     id="name"
-                                    label="Name"
+                                    label="Album title"
                                     name="name"
                                     type="text"
                                     autoFocus={!isEditMode}
