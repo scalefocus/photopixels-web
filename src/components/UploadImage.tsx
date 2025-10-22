@@ -64,7 +64,7 @@ const Upload: React.FC = () => {
 				)
 			);
 
-			//get uploaded object ids
+			// get uploaded object ids
 			const uploadedIds: string[] = [];
 			for (const r of results) {
 				if (r.status === 'fulfilled') {
