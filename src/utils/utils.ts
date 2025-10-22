@@ -15,7 +15,7 @@ export const storage = {
 		localStorage.setItem('expiration', expiration.toString());
 	},
 	setRefreshExpiration: () => {
-		//refresh expiration in	3 days
+		// refresh expiration in	3 days
 		const expiration = new Date(Date.now() + 259200000);
 		localStorage.setItem('refresh-expiration', expiration.toString());
 	},
