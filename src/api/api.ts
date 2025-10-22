@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { UploadImageResponse } from 'models/UploadImageResponse';
 
 import {
 	BASE_URL,
@@ -165,7 +166,7 @@ export async function uploadImage({
 }: {
 	file: File;
 	objectHash: string;
-}): Promise<void> {
+}): Promise<UploadImageResponse> {
 	const res = await axiosClient.post(
 		'object',
 		{
@@ -180,7 +181,6 @@ export async function uploadImage({
 			},
 		}
 	);
-
 	return res.data;
 }
 

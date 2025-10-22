@@ -4,6 +4,8 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
 import { DashboardLayout } from '../layout/DashboardLayout';
 import AdminSettingsPage from './AdminSettings';
+import AddAlbumPage from './Albums/AddAlbumPage';
+import AlbumsPage from './Albums/AlbumsPage';
 import CreateUserPage from './CreateUserPage';
 import EditUserPage from './EditUserPage';
 import FavoritesPage from './FavoritesPage';
@@ -83,6 +85,30 @@ export default function App() {
 						element={
 							<ProtectedRoute>
 								<FavoritesPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/albums"
+						element={
+							<ProtectedRoute>
+								<AlbumsPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/albums/add"
+						element={
+							<ProtectedRoute>
+								<AddAlbumPage />
+							</ProtectedRoute>
+						}
+					/>
+					<Route
+						path="/albums/view/:albumId"
+						element={
+							<ProtectedRoute>
+								<AddAlbumPage />
 							</ProtectedRoute>
 						}
 					/>

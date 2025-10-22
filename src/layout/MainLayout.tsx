@@ -1,11 +1,12 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { Box, Drawer, IconButton, Typography } from '@mui/material';
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
 
 import Nav from './Nav';
 
 interface MainLayoutProps extends PropsWithChildren {
-	title: string;
+	title: string | ReactNode;
+	actions?: ReactNode;
 }
 
 const MainLayout = (props: MainLayoutProps) => {
@@ -47,26 +48,34 @@ const MainLayout = (props: MainLayoutProps) => {
 					display="flex"
 					sx={{
 						justifyContent: 'space-between',
-						alignItems: 'flex-start',
+						alignItems: 'center',
+						mb: 4,
 					}}
 				>
-					<Typography variant="h5" fontWeight={700} sx={{ mb: 4 }}>
-						{props.title}
-					</Typography>
-					<IconButton
-						color="inherit"
-						aria-label="open drawer"
-						onClick={toggleDrawer(true)}
-						edge="start"
-						sx={{
-							...(open && { display: 'none' }),
-							display: { md: 'none' },
-						}}
-					>
-						<MenuIcon />
-					</IconButton>
-				</Box>
+					{typeof props.title === 'string' ? (
+						<Typography variant="h5" fontWeight={700}>
+							{props.title}
+						</Typography>
+					) : (
+						props.title
+					)}
+					<Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+						{props.actions}
 
+						<IconButton
+							color="inherit"
+							aria-label="open drawer"
+							onClick={toggleDrawer(true)}
+							edge="start"
+							sx={{
+								...(open && { display: 'none' }),
+								display: { md: 'none' },
+							}}
+						>
+							<MenuIcon />
+						</IconButton>
+					</Box>
+				</Box>
 				{props.children}
 			</Box>
 		</Box>

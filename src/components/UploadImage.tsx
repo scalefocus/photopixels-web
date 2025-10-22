@@ -8,8 +8,11 @@ import {
 	Typography,
 } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addObjectsToAlbum } from 'api/albumApi';
+import { UploadImageResponse } from 'models/UploadImageResponse';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useParams } from 'react-router-dom';
 import { IUploadError } from 'types/types';
 
 import { uploadImage } from '../api/api';
@@ -19,6 +22,7 @@ const Upload: React.FC = () => {
 	const [selectedFilesCount, setSelectedFilesCount] = useState(0);
 	const [isDragging, setIsDragging] = useState(false);
 	const queryClient = useQueryClient();
+	const { albumId } = useParams<{ albumId?: string }>();
 
 	const uploadImageMutation = useMutation({
 		mutationFn: uploadImage,
@@ -43,27 +47,48 @@ const Upload: React.FC = () => {
 		setIsDragging(false);
 	};
 
-	const handleUpload = (files: Array<File>) => {
+	const handleUpload = async (files: Array<File>) => {
 		const numberOfFiles = files.length;
-
 		setSelectedFilesCount(numberOfFiles);
 
-		files.map(async (file) => {
-			const objectHash = await generateImageHash(file);
-
-			uploadImageMutation.mutate(
-				{ file, objectHash },
-				{
-					onSuccess: () => {
-						toast.success(
-							`${numberOfFiles} media${
-								numberOfFiles > 1 ? 's' : ''
-							} uploaded successfully`
-						);
-					},
-				}
+		try {
+			// Bulk create file hashes
+			const withHashes = await Promise.all(
+				files.map(async (file) => ({ file, objectHash: await generateImageHash(file) }))
 			);
-		});
+
+			// Bulk upload
+			const results = await Promise.allSettled(
+				withHashes.map(({ file, objectHash }) =>
+					uploadImageMutation.mutateAsync({ file, objectHash })
+				)
+			);
+
+			//get uploaded object ids
+			const uploadedIds: string[] = [];
+			for (const r of results) {
+				if (r.status === 'fulfilled') {
+					const res: UploadImageResponse = r.value;
+					const newId = res?.id ?? null;
+					if (newId) uploadedIds.push(newId);
+				}
+			}
+
+			// add uploaded images to album if in album mode
+			if (albumId && uploadedIds.length > 0) {
+				await addObjectsToAlbum({ albumId, objectIds: uploadedIds });
+			}
+
+			toast.success(`${numberOfFiles} media${numberOfFiles > 1 ? 's' : ''} uploaded successfully`);
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : String(err);
+			toast.error(`Error during upload: ${msg}`);
+		} finally {
+			queryClient.invalidateQueries({ queryKey: ['fetchIds'] });
+			if (albumId) {
+			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId] });
+			}
+		}
 	};
 
 	return (
@@ -110,10 +135,10 @@ const Upload: React.FC = () => {
 						)
 					}
 				>
-					{isPending ? 'Uploading' : 'Browse Files'} 
+					{isPending ? 'Uploading' : 'Browse Files'}
 					<input
 						data-testid="input-browse-files"
-						type="file"	
+						type="file"
 						accept="image/*, video/*"
 						onChange={(event) => {
 							const files = event.target.files;
