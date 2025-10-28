@@ -79,3 +79,12 @@ export const generateImageHash = async (file: File) => {
 	const base64String = hexToBase64(hashValue);
 	return base64String;
 };
+
+export const formatUsedQuotaInGB = (usedQuota: number, decimals = 2) => {
+  if (usedQuota <= 0) return "0.0";
+
+  const rawGB = formatBytes(usedQuota, decimals);
+  const gbValue = parseFloat(rawGB);
+
+  return gbValue < 0.1 ? "0.1" : `${rawGB}`;
+}
