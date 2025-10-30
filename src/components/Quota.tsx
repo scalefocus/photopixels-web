@@ -10,14 +10,15 @@ import { styled } from '@mui/material/styles';
 import AuthContext from 'context/authContext';
 import { useContext } from 'react';
 
-import { formatBytes } from '../utils/utils';
+import {  formatUsedQuotaInGB } from '../utils/utils';
 
 export const Quota = () => {
 	const { user } = useContext(AuthContext);
 	const quota = user?.quota || 0;
 	const usedQuota = user?.usedQuota || 0;
 
-	const percentage = ((usedQuota / quota) * 100).toFixed(1);
+	const percentage = (usedQuota / quota) * 100;
+	const displayedUsedQuota = percentage > 0 ? Math.max(0.1, Math.round(percentage * 10) / 10).toFixed(1) : "0.0";
 
 	const BorderLinearProgress = styled(LinearProgress)(() => ({
 		height: 8,
@@ -60,7 +61,7 @@ export const Quota = () => {
 								Quota
 							</Typography>
 							<Typography color="text.primary" fontWeight="600" variant="h4">
-								{percentage}%
+								{displayedUsedQuota}%
 							</Typography>
 						</Stack>
 					</Stack>
@@ -73,7 +74,7 @@ export const Quota = () => {
 						/>
 					</Box>
 					<Typography color="text.secondary" gutterBottom sx={{ mt: 3 }}>
-						{formatBytes(usedQuota, 2)} GB of {formatBytes(quota, 2)} GB used
+						{formatUsedQuotaInGB(usedQuota, 2)} GB of {formatUsedQuotaInGB(quota, 2)} GB used
 					</Typography>
 				</Box>
 			) : (

@@ -15,7 +15,7 @@ export const storage = {
 		localStorage.setItem('expiration', expiration.toString());
 	},
 	setRefreshExpiration: () => {
-		//refresh expiration in	3 days
+		// refresh expiration in	3 days
 		const expiration = new Date(Date.now() + 259200000);
 		localStorage.setItem('refresh-expiration', expiration.toString());
 	},
@@ -79,3 +79,12 @@ export const generateImageHash = async (file: File) => {
 	const base64String = hexToBase64(hashValue);
 	return base64String;
 };
+
+export const formatUsedQuotaInGB = (usedQuota: number, decimals = 2) => {
+  if (usedQuota <= 0) return "0.0";
+
+  const rawGB = formatBytes(usedQuota, decimals);
+  const gbValue = parseFloat(rawGB);
+
+  return gbValue < 0.1 ? "0.1" : `${rawGB}`;
+}
