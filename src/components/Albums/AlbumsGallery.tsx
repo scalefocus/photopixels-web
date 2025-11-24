@@ -39,7 +39,7 @@ export const AlbumsGallery: React.FC = () => {
             return;
         }
 
-        if (confirm(`Are you sure you want to delete "${a.name}"?. The files in the albums will be still available in your feed?`)) {
+        if (confirm(`Are you sure you want to delete "${a.name}"? The files in the albums will be still available in your feed?`)) {
             deleteAlbumMutation.mutate(id, {
                 onSuccess: () => {
                     toast.success(`The album "${a.name}" has been successfully deleted.`);
