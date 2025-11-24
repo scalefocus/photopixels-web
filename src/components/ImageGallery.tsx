@@ -107,7 +107,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 	const addToAlbumMutation = useMutation({
 		mutationFn: addObjectsToAlbum,
 		onSuccess: () => {
-			toast.success('The images has been added successfully to the album');
+			toast.success('The file(s) were added to the selected album(s).');
 			setSelectedImages([]);
 			setOpenAddToAlbumDialog(false);
 			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
