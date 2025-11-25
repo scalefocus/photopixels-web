@@ -334,7 +334,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 						</Tooltip>
 						{albumId && (
 							<>
-								<Tooltip title="Remove from album ZZZ">
+								<Tooltip title="Remove from album">
 									<span>
 										<IconButton
 											color="inherit"
