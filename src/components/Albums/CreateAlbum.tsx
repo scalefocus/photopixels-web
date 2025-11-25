@@ -182,6 +182,7 @@ export const CreateAlbum: React.FC = () => {
                                     type="text"
                                     autoFocus={!isEditMode}
                                     value={name}
+                                    inputProps={{ maxLength: 30 }}
                                     onChange={(event) => setName(event.target.value)} onKeyDown={(e) => {
                                         if (e.key === 'Escape') {
                                             e.preventDefault();
