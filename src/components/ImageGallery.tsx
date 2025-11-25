@@ -25,7 +25,11 @@ import {
 	useMutation,
 	useQueryClient,
 } from '@tanstack/react-query';
-import { addObjectsToAlbum, bulkRemoveObjectsFromAlbum, getAlbumItems } from 'api/albumApi';
+import {
+	addObjectsToAlbum,
+	bulkRemoveObjectsFromAlbum,
+	getAlbumItems,
+} from 'api/albumApi';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
@@ -110,10 +114,14 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			toast.success('The file(s) were added to the selected album(s).');
 			setSelectedImages([]);
 			setOpenAddToAlbumDialog(false);
-			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+			queryClient.invalidateQueries({
+				queryKey: ['fetchIds', albumId ?? null],
+			});
 		},
 		onError: (error) => {
-			toast.error(`Error adding object to the album: ${error?.message ?? 'Error'}`);
+			toast.error(
+				`Error adding object to the album: ${error?.message ?? 'Error'}`
+			);
 		},
 	});
 
@@ -122,7 +130,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 		onSuccess: () => {
 			toast.success('Selected item(s) were removed from the album.');
 			setSelectedImages([]);
-			queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+			queryClient.invalidateQueries({
+				queryKey: ['fetchIds', albumId ?? null],
+			});
 		},
 		onError: (error) => {
 			toast.error(`Error removing from album: ${error?.message ?? 'Error'}`);
@@ -187,7 +197,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+					queryClient.invalidateQueries({
+						queryKey: ['fetchIds', albumId ?? null],
+					});
 				},
 			}
 		);
@@ -203,8 +215,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 						const match = disposition.match(
 							/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
 						);
-						if (match && match[1])
-							filename = match[1].replace(/['"]/g, '');
+						if (match && match[1]) filename = match[1].replace(/['"]/g, '');
 					}
 
 					const link = document.createElement('a');
@@ -224,7 +235,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{
 				onSuccess: () => {
 					handleClearSelection();
-					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+					queryClient.invalidateQueries({
+						queryKey: ['fetchIds', albumId ?? null],
+					});
 				},
 			}
 		);
@@ -235,7 +248,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 				{ objectIds: [id] },
 				{
 					onSuccess: () => {
-						queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+						queryClient.invalidateQueries({
+							queryKey: ['fetchIds', albumId ?? null],
+						});
 					},
 				}
 			);
@@ -246,7 +261,9 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 			{ objectIds: [id] },
 			{
 				onSuccess: () => {
-					queryClient.invalidateQueries({ queryKey: ['fetchIds', albumId ?? null] });
+					queryClient.invalidateQueries({
+						queryKey: ['fetchIds', albumId ?? null],
+					});
 				},
 			}
 		);
@@ -255,11 +272,16 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
+	const [openRemoveFromAlbumDialog, setOpenRemoveFromAlbumDialog] = useState(false);
+
 	const [openAddToAlbumDialog, setOpenAddToAlbumDialog] = React.useState(false);
 
 	const handleAddToAlbum = (albumIdToAdd: string) => {
 		if (selectedImages.length === 0) return;
-		addToAlbumMutation.mutate({ albumId: albumIdToAdd, objectIds: selectedImages });
+		addToAlbumMutation.mutate({
+			albumId: albumIdToAdd,
+			objectIds: selectedImages,
+		});
 	};
 
 	const handleRemoveFromAlbum = () => {
@@ -311,18 +333,60 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 							</IconButton>
 						</Tooltip>
 						{albumId && (
-							<Tooltip title="Remove from album">
-								<span>
-									<IconButton
-										color="inherit"
-										onClick={handleRemoveFromAlbum}
-										disabled={removeFromAlbumMutation.isPending}
-										aria-label="Remove from album"
+							<>
+								<Tooltip title="Remove from album">
+									<span>
+										<IconButton
+											color="inherit"
+											onClick={() => setOpenRemoveFromAlbumDialog(true)}
+											disabled={removeFromAlbumMutation.isPending}
+											aria-label="Remove from album"
+										>
+											<RemoveCircleOutlineIcon />
+										</IconButton>
+									</span>
+								</Tooltip>
+								<Dialog
+									open={openRemoveFromAlbumDialog}
+									onClose={() => setOpenRemoveFromAlbumDialog(false)}
+									aria-labelledby="remove-album-dialog-title"
+									aria-describedby="remove-album-dialog-description"
+								>
+									<DialogTitle
+										id="remove-album-dialog-title"
+										sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
 									>
-										<RemoveCircleOutlineIcon />
-									</IconButton>
-								</span>
-							</Tooltip>
+										<RemoveCircleOutlineIcon color="error" sx={{ fontSize: 32 }} />
+										Remove from album {selectedImages.length}{' '}
+										{selectedImages.length === 1 ? 'item' : 'items'}?
+									</DialogTitle>
+									<Typography
+										id="remove-album-dialog-description"
+										sx={{ px: 3, pb: 1, color: 'text.secondary' }}
+									>
+										This action will remove the selected{' '}
+										{selectedImages.length === 1 ? 'item' : 'items'} from album.
+									</Typography>
+									<DialogActions>
+										<Button
+											onClick={() => setOpenRemoveFromAlbumDialog(false)}
+											variant="outlined"
+										>
+											Cancel
+										</Button>
+										<Button
+											onClick={() => {
+												handleRemoveFromAlbum();
+												setOpenRemoveFromAlbumDialog(false);
+											}}
+											color="error"
+											variant="contained"
+										>
+											Remove from Album
+										</Button>
+									</DialogActions>
+								</Dialog>
+							</>
 						)}
 						<Tooltip title="Delete">
 							<IconButton
@@ -392,9 +456,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 				</Typography>
 
 				{selectedImages.length > 0 && !albumId && (
-					<Tooltip
-						title="Add to Album"
-					>
+					<Tooltip title="Add to Album">
 						<span>
 							<Button
 								variant="outlined"
