@@ -388,7 +388,7 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 								</Dialog>
 							</>
 						)}
-						<Tooltip title="Delete ZZZ">
+						<Tooltip title="Delete">
 							<IconButton
 								color="inherit"
 								onClick={() => setOpenDeleteDialog(true)}
