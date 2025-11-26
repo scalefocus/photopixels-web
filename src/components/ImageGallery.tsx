@@ -276,11 +276,14 @@ export const ImageGallery: React.FC<{ albumId?: string }> = ({ albumId }) => {
 
 	const [openAddToAlbumDialog, setOpenAddToAlbumDialog] = React.useState(false);
 
-	const handleAddToAlbum = (albumIdToAdd: string) => {
-		if (selectedImages.length === 0) return;
-		addToAlbumMutation.mutate({
-			albumId: albumIdToAdd,
-			objectIds: selectedImages,
+	const handleAddToAlbum = (albumIdsToAdd: string[]) => {
+		if (selectedImages.length === 0 || albumIdsToAdd.length === 0) return;
+
+		albumIdsToAdd.forEach((albumIdToAdd) => {
+			addToAlbumMutation.mutate({
+				albumId: albumIdToAdd,
+				objectIds: selectedImages,
+			});
 		});
 	};
 

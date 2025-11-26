@@ -25,8 +25,24 @@ const AddAlbumPage = () => {
 				toast.success('Album deleted.');
 				navigate('/albums');
 			},
-			onError: (err) => {
-				toast.error(`Error deleting album: ${err?.message ?? 'Error'}`);
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			onError: (err: any) => {
+				const errors = err?.response?.data?.errors;
+
+				const albumNotEmptyMessage: string | undefined =
+					errors?.AlbumNotEmpty?.[0];
+
+				const firstModelError: string | undefined = errors
+					? Object.values(errors).flat()[0] as string
+					: undefined;
+
+				const apiMessage =
+					albumNotEmptyMessage ||
+					firstModelError ||
+					err?.message ||
+					'Unexpected error occurred';
+
+				toast.error(`Error deleting album: ${apiMessage}`);
 			},
 		});
 	};
