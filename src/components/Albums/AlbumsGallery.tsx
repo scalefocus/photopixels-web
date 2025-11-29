@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { AppBar, Button, Checkbox, Dialog, DialogActions, DialogTitle, Divider, Grid, IconButton, Paper, Slide, Stack, Toolbar, Tooltip, Typography, useTheme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { deleteAlbum,getAlbums } from 'api/albumApi';
+import { deleteAlbum, getAlbums } from 'api/albumApi';
 import { Album } from "models/Album";
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -39,7 +39,7 @@ export const AlbumsGallery: React.FC = () => {
             return;
         }
 
-        if (confirm(`Are you sure you want to delete "${a.name}"? The files in the albums will be still available in your feed?`)) {
+        if (confirm(`Are you sure you want to delete "${a.name}"? The files in the albums will be still available in your feed.`)) {
             deleteAlbumMutation.mutate(id, {
                 onSuccess: () => {
                     toast.success(`The album "${a.name}" has been successfully deleted.`);
