@@ -18,7 +18,7 @@ import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-import { deleteAccount } from '../api/api';
+import { deleteAccount } from '../../api/api';
 
 export const DeleteAccount = () => {
 	const [password, setPassword] = useState('');

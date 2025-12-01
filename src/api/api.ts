@@ -317,7 +317,7 @@ export async function downloadObjectsAsZip({
 }): Promise<{ href: string; disposition: string }> {
 	const res = await axiosClient.post('/object/downloadZip', {
 		ObjectIds: objectIds,
-	},{
+	}, {
 		responseType: 'blob',
 	});
 
@@ -402,3 +402,13 @@ export const fetchFavoritesIds = async ({
 	});
 	return res.data;
 };
+
+export async function setPreviewConversion({
+	previewConversion
+}: {
+	previewConversion: boolean;
+}): Promise<void> {
+	const response = await axiosClient.put('user/previewconversion/' + previewConversion);
+
+	return response.data;
+}
