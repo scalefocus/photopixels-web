@@ -403,12 +403,12 @@ export const fetchFavoritesIds = async ({
 	return res.data;
 };
 
-export async function setPreviewConversion({
+export async function setАllowVideoConversion({
 	previewConversion
 }: {
 	previewConversion: boolean;
 }): Promise<void> {
-	const response = await axiosClient.put('user/previewconversion/' + previewConversion);
+	const response = await axiosClient.put('user/allowvideoconversion/' + previewConversion);
 
 	return response.data;
 }

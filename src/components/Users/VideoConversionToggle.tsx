@@ -1,6 +1,6 @@
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { setPreviewConversion } from 'api/api';
+import { setАllowVideoConversion } from 'api/api';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -48,7 +48,7 @@ export const VideoConversionToggle = () => {
     };
 
     const setPreviewConversionMutation = useMutation({
-        mutationFn: setPreviewConversion,
+        mutationFn: setАllowVideoConversion,
         onSuccess: () => {
             toast.success('The option has been updated successfully');
         },
