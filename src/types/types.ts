@@ -72,3 +72,12 @@ export interface ICommonError {
 		};
 	};
 }
+
+export interface IUserSetting {
+	userId: string;
+	settings: IUserSettings
+}
+
+export interface IUserSettings {
+	allowVideoConversion: boolean
+}

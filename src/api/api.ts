@@ -7,7 +7,7 @@ import {
 	NUMBER_OF_OBJECTS_PER_PAGE,
 	USER_ROLES_OPTIONS,
 } from '../constants/constants';
-import { IGetObjects, IGetUser, IUser, User } from '../types/types';
+import { IGetObjects, IGetUser, IUser, IUserSetting, User } from '../types/types';
 import axiosClient from './axios';
 
 export async function getStatus(): Promise<{
@@ -412,3 +412,12 @@ export async function setАllowVideoConversion({
 
 	return response.data;
 }
+
+export const useUserSettings = () =>
+	useQuery({
+		queryKey: ['userSettings'],
+		queryFn: async (): Promise<IUserSetting> => {
+			const res = await axiosClient.get('/users/me/settings');
+			return res.data;
+		},
+	});
