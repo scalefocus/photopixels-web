@@ -81,3 +81,13 @@ export interface IUserSetting {
 export interface IUserSettings {
 	allowVideoConversion: boolean
 }
+
+export interface IGetVideoPreviewFilesSize {
+	quota: number;
+	usedQuota: number;
+	size: number;
+	numberOfFilesToConvert: number;
+	numberOfPreviewFiles: number;
+	sizeOfFilesToConvert: number;
+	toDeletePreviewFiles: boolean;
+}

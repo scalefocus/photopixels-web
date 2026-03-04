@@ -1,6 +1,6 @@
 import { ChangePassword } from '../components/Users/ChangePassword';
 import { DeleteAccount } from '../components/Users/DeleteAccount';
-import { VideoConversionToggle } from '../components/Users/VideoConversionToggle';
+import { VideoConversionSettings } from '../components/Users/VideoConversionSettings';
 import MainLayout from '../layout/MainLayout';
 
 const SettingsPage = () => {
@@ -8,7 +8,7 @@ const SettingsPage = () => {
 		<MainLayout title="Settings">
 			<ChangePassword />
 			<DeleteAccount />
-			<VideoConversionToggle />
+			<VideoConversionSettings />
 		</MainLayout>
 	);
 };

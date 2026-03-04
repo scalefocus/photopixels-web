@@ -49,7 +49,7 @@ export const DeleteAccount = () => {
 				p: 2,
 				border: '1px  solid rgb(0, 0, 0, 0.12)',
 				borderRadius: '10px',
-				maxWidth: '700px',
+				maxWidth: '1100px',
 				mt: 4,
 			}}
 		>

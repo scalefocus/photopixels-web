@@ -7,7 +7,7 @@ import {
 	NUMBER_OF_OBJECTS_PER_PAGE,
 	USER_ROLES_OPTIONS,
 } from '../constants/constants';
-import { IGetObjects, IGetUser, IUser, IUserSetting, User } from '../types/types';
+import { IGetObjects, IGetUser, IGetVideoPreviewFilesSize, IUser, IUserSetting, User } from '../types/types';
 import axiosClient from './axios';
 
 export async function getStatus(): Promise<{
@@ -421,3 +421,13 @@ export const useUserSettings = () =>
 			return res.data;
 		},
 	});
+
+export async function GetVideoPreviewFilesSize(): Promise<IGetVideoPreviewFilesSize> {
+	const response = await axiosClient.get('/user/getvideoconversationfilessize');
+	return response.data;
+}
+
+export async function DeleteVideoConversationFiles(): Promise<boolean> {
+	const response = await axiosClient.delete('/users/deletevideoconversationfiles');
+	return response.data;
+}
