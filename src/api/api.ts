@@ -7,7 +7,7 @@ import {
 	NUMBER_OF_OBJECTS_PER_PAGE,
 	USER_ROLES_OPTIONS,
 } from '../constants/constants';
-import { IGetObjects, IGetUser, IUser, User } from '../types/types';
+import { IGetObjects, IGetUser, IGetVideoPreviewFilesSize, IUser, IUserSetting, User } from '../types/types';
 import axiosClient from './axios';
 
 export async function getStatus(): Promise<{
@@ -317,7 +317,7 @@ export async function downloadObjectsAsZip({
 }): Promise<{ href: string; disposition: string }> {
 	const res = await axiosClient.post('/object/downloadZip', {
 		ObjectIds: objectIds,
-	},{
+	}, {
 		responseType: 'blob',
 	});
 
@@ -402,3 +402,32 @@ export const fetchFavoritesIds = async ({
 	});
 	return res.data;
 };
+
+export async function setАllowVideoConversion({
+	previewConversion
+}: {
+	previewConversion: boolean;
+}): Promise<void> {
+	const response = await axiosClient.put('user/allowvideoconversion/' + previewConversion);
+
+	return response.data;
+}
+
+export const useUserSettings = () =>
+	useQuery({
+		queryKey: ['userSettings'],
+		queryFn: async (): Promise<IUserSetting> => {
+			const res = await axiosClient.get('/users/me/settings');
+			return res.data;
+		},
+	});
+
+export async function GetVideoPreviewFilesSize(): Promise<IGetVideoPreviewFilesSize> {
+	const response = await axiosClient.get('/user/getvideoconversationfilessize');
+	return response.data;
+}
+
+export async function DeleteVideoConversationFiles(): Promise<boolean> {
+	const response = await axiosClient.delete('/users/deletevideoconversationfiles');
+	return response.data;
+}

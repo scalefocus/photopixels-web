@@ -72,3 +72,22 @@ export interface ICommonError {
 		};
 	};
 }
+
+export interface IUserSetting {
+	userId: string;
+	settings: IUserSettings
+}
+
+export interface IUserSettings {
+	allowVideoConversion: boolean
+}
+
+export interface IGetVideoPreviewFilesSize {
+	quota: number;
+	usedQuota: number;
+	size: number;
+	numberOfFilesToConvert: number;
+	numberOfPreviewFiles: number;
+	sizeOfFilesToConvert: number;
+	toDeletePreviewFiles: boolean;
+}
