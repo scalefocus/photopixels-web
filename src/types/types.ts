@@ -58,6 +58,13 @@ export interface IThumbnail {
 	dateCreated: string;
 	mediaType?: string;
 	isFavorite?: boolean;
+	dateMediaTaken: string;
+	dateMediaCreated: string;
+	datePhotopixelsImported: string;
+	filename: string;
+	sizeInBytes: number;
+	height: number;
+	width: number;
 }
 
 export interface IGetObjects {
@@ -75,11 +82,11 @@ export interface ICommonError {
 
 export interface IUserSetting {
 	userId: string;
-	settings: IUserSettings
+	settings: IUserSettings;
 }
 
 export interface IUserSettings {
-	allowVideoConversion: boolean
+	allowVideoConversion: boolean;
 }
 
 export interface IGetVideoPreviewFilesSize {
